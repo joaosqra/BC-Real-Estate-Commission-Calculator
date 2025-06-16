@@ -371,6 +371,9 @@
       color: var(--text-primary);
       font-size: 1.05rem;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
     }
 
     .result-value.negative {
@@ -438,6 +441,15 @@
         0 1px 4px rgba(0, 0, 0, 0.2),
         inset 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+    
+    /* -- NEW -- Class for 'copied' state */
+    .copy-button-inline.copied {
+        background-color: var(--success);
+        background-image: none;
+        color: #fff;
+        border-color: rgba(52, 199, 89, 0.5);
+    }
+
 
     .footer {
       text-align: center;
@@ -482,14 +494,21 @@
 
     @keyframes pulseGlass {
       0% { 
-        background: rgba(255, 255, 255, 0.4);
-        transform: scale(1.02);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        background-color: var(--glass-active);
+        transform: scale(1.01);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3),
+                    0 8px 24px rgba(0, 0, 0, 0.12),
+                    0 4px 12px rgba(0, 0, 0, 0.08),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
       }
       100% { 
-        background: transparent;
+        background-color: var(--primary-glass);
         transform: scale(1);
-        box-shadow: none;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12),
+                    0 4px 12px rgba(0, 0, 0, 0.08),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
       }
     }
 
@@ -540,6 +559,7 @@
       .result-value {
         min-width: auto;
         margin-left: 0;
+        justify-content: flex-start;
       }
     }
 
@@ -580,19 +600,30 @@
     <div class="result" id="result-block">
       <div class="result-row">
         <div class="result-label">Gross Commission:</div>
-        <div class="result-value" id="gross-wrap"><span id="gross"></span><button class="copy-button-inline" onclick="copySingle('gross')">Copy</button></div>
+        <div class="result-value">
+            <span id="gross"></span>
+            <button class="copy-button-inline" onclick="copySingle('gross', event)">Copy</button>
+        </div>
       </div>
       <div class="result-row">
         <div class="result-label">Buyer's Agent Commission:</div>
-        <div class="result-value" id="coop-wrap"><span id="coop"></span><button class="copy-button-inline" onclick="copySingle('coop')">Copy</button></div>
+        <div class="result-value">
+            <span id="coop"></span>
+            <button class="copy-button-inline" onclick="copySingle('coop', event)">Copy</button>
+        </div>
       </div>
       <div class="result-row">
         <div class="result-label">Listing Agent Commission:</div>
-        <div class="result-value" id="listing-wrap"><span id="listing"></span><button class="copy-button-inline" onclick="copySingle('listing')">Copy</button></div>
+        <div class="result-value" id="listing-wrap">
+            <span id="listing"></span>
+            <button class="copy-button-inline" onclick="copySingle('listing', event)">Copy</button>
+        </div>
       </div>
       <div class="result-row">
         <div class="result-label">GST (5% on Gross):</div>
-        <div class="result-value"><span id="gst"></span></div>
+        <div class="result-value">
+            <span id="gst"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -602,124 +633,134 @@
   </div>
 
   <script>
+    // --- UTILITY FUNCTIONS ---
     function formatCurrency(value) {
-      return new Intl.NumberFormat('en-CA', {
-        style: 'currency',
-        currency: 'CAD'
-      }).format(value);
+      return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(value);
     }
 
     function parsePercent(value) {
-      return parseFloat(value.replace(/[%]/g, '')) / 100;
+      if (!value || value.trim() === '%' || value.trim() === '') return 0;
+      return parseFloat(value.replace(/[%]/g, '')) / 100 || 0;
     }
 
     function parseNumber(value) {
-      return parseFloat(value.replace(/[,]/g, '')) || 0;
+      if (!value) return 0;
+      return parseFloat(String(value).replace(/[,]/g, '')) || 0;
     }
 
     function formatNumberWithCommas(value) {
-      return value.toLocaleString('en-CA');
+        if (value === 0) return '';
+        return value.toLocaleString('en-CA');
     }
 
     function formatPercent(value) {
+      if (value === 0) return '';
       let scaled = value * 100;
-      if (scaled % 1 === 0) return scaled.toFixed(0) + '%';
-      if (scaled * 100 % 1 === 0) return scaled.toFixed(2).replace(/0+$/, '').replace(/\.$/, '') + '%';
-      return scaled.toFixed(4).replace(/0+$/, '').replace(/\.$/, '') + '%';
+      // Use toFixed to handle floating point inaccuracies before checking for integers
+      if (Number.isInteger(Number(scaled.toFixed(5)))) {
+          return scaled.toFixed(0) + '%';
+      }
+      // Clean up trailing zeros and unnecessary decimals
+      return parseFloat(scaled.toFixed(4)).toString() + '%';
     }
 
+    // --- MAIN CALCULATION LOGIC ---
     function calculate() {
-      const calculator = document.getElementById('calculator');
-      
-      const errorMessage = '⚠️ Total commission must exceed Co‑operating Agent commission';
-      const priceInput = document.getElementById('price');
-      const price = parseNumber(priceInput.value);
-      priceInput.value = formatNumberWithCommas(price);
-
-      const totalFirstInput = document.getElementById('total_first');
-      const totalRestInput = document.getElementById('total_rest');
-      const coopFirstInput = document.getElementById('coop_first');
-      const coopRestInput = document.getElementById('coop_rest');
-
-      const totalFirst = parsePercent(totalFirstInput.value);
-      const totalRest = parsePercent(totalRestInput.value);
-      const coopFirst = parsePercent(coopFirstInput.value);
-      const coopRest = parsePercent(coopRestInput.value);
-
-      totalFirstInput.value = formatPercent(totalFirst);
-      totalRestInput.value = formatPercent(totalRest);
-      coopFirstInput.value = formatPercent(coopFirst);
-      coopRestInput.value = formatPercent(coopRest);
+      const price = parseNumber(document.getElementById('price').value);
+      const totalFirst = parsePercent(document.getElementById('total_first').value);
+      const totalRest = parsePercent(document.getElementById('total_rest').value);
+      const coopFirst = parsePercent(document.getElementById('coop_first').value);
+      const coopRest = parsePercent(document.getElementById('coop_rest').value);
 
       const first100k = Math.min(100000, price);
       const remaining = Math.max(0, price - 100000);
 
-      const gross = Math.max(0, (first100k * totalFirst) + (remaining * totalRest));
-      const coop = Math.max(0, (first100k * coopFirst) + (remaining * coopRest));
-      const listing = Math.max(0, gross - coop);
+      const gross = (first100k * totalFirst) + (remaining * totalRest);
+      const coop = (first100k * coopFirst) + (remaining * coopRest);
+      const listing = gross - coop;
       const gst = gross * 0.05;
 
-      const grossEl = document.getElementById('gross');
-      grossEl.innerText = formatCurrency(gross);
-      grossEl.classList.add('pulse');
-      setTimeout(() => grossEl.classList.remove('pulse'), 600);
-      
-      const coopEl = document.getElementById('coop');
-      coopEl.innerText = formatCurrency(coop);
-      coopEl.classList.add('pulse');
-      setTimeout(() => coopEl.classList.remove('pulse'), 600);
-      
-      const listingEl = document.getElementById('listing');
-      listingEl.innerText = formatCurrency(listing);
-      listingEl.classList.add('pulse');
-      setTimeout(() => listingEl.classList.remove('pulse'), 600);
-      
-      const gstEl = document.getElementById('gst');
-      gstEl.innerText = formatCurrency(gst);
-      gstEl.classList.add('pulse');
-      setTimeout(() => gstEl.classList.remove('pulse'), 600);
+      // Update UI elements
+      document.getElementById('gross').innerText = formatCurrency(gross);
+      document.getElementById('coop').innerText = formatCurrency(coop);
+      document.getElementById('listing').innerText = formatCurrency(listing);
+      document.getElementById('gst').innerText = formatCurrency(gst);
 
-      document.getElementById('coop-wrap').classList.toggle('negative', coop === 0);
-      document.getElementById('listing-wrap').classList.toggle('negative', listing === 0);
+      // Add visual feedback
+      document.getElementById('listing-wrap').classList.toggle('negative', listing < 0);
+      manageWarning(listing < 0);
+    }
+    
+    // --- UI MANAGEMENT ---
+    function manageWarning(show) {
+        const errorMessage = '⚠️ Total commission must exceed Co‑operating Agent commission';
+        const existingWarning = document.getElementById('warning');
+        const coopGroup = document.getElementById('coop_rest').closest('.group');
 
-      const warning = document.getElementById('warning');
-      if (gross < coop) {
-        if (!warning) {
-          const warnEl = document.createElement('div');
-          warnEl.id = 'warning';
-          warnEl.className = 'warning';
-          warnEl.textContent = errorMessage;
-          document.querySelector('.calculator').appendChild(warnEl);
+        if (show) {
+            if (!existingWarning) {
+                const warnEl = document.createElement('div');
+                warnEl.id = 'warning';
+                warnEl.className = 'warning';
+                warnEl.textContent = errorMessage;
+                coopGroup.after(warnEl);
+            }
+        } else if (existingWarning) {
+            existingWarning.remove();
         }
-      } else if (warning) {
-        warning.remove();
-      }
     }
 
-    function copySingle(id) {
+    function formatOnFocus(event) {
+        const input = event.target;
+        if (input.id !== 'price') {
+            input.value = input.value.replace(/[%]/g, '');
+        }
+    }
+
+    function formatOnBlur(event) {
+        const input = event.target;
+        if (input.id === 'price') {
+            const price = parseNumber(input.value);
+            input.value = formatNumberWithCommas(price);
+        } else {
+            const percent = parsePercent(input.value);
+            input.value = formatPercent(percent);
+        }
+        // Recalculate after formatting
+        calculate();
+    }
+
+    function copySingle(id, event) {
       const value = document.getElementById(id).innerText.replace(/[^\d.]/g, '');
       navigator.clipboard.writeText(value).then(() => {
-        // Visual feedback for successful copy
         const button = event.target;
         const originalText = button.textContent;
+        
+        // Add class to change style via CSS
+        button.classList.add('copied');
         button.textContent = 'Copied!';
-        button.style.background = 'rgba(52, 199, 89, 0.3)';
-        button.style.borderColor = 'rgba(52, 199, 89, 0.5)';
-        button.style.color = 'var(--success)';
+        
+        // Revert after a delay
         setTimeout(() => {
           button.textContent = originalText;
-          button.style.background = '';
-          button.style.borderColor = '';
-          button.style.color = '';
-        }, 1000);
+          button.classList.remove('copied');
+        }, 1200);
+
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
       });
     }
 
-    document.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', calculate);
+    // --- EVENT LISTENERS ---
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', calculate);
+        input.addEventListener('focus', formatOnFocus);
+        input.addEventListener('blur', formatOnBlur);
+      });
+      // Initial calculation on page load
+      calculate();
     });
-
-    window.addEventListener('DOMContentLoaded', calculate);
   </script>
 </body>
 </html>
