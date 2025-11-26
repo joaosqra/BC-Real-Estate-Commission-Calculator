@@ -4,690 +4,635 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BC Real Estate Commission Calculator</title>
+  
+  <!-- Fonts: Inter (UI) and 'Digital' font for screen -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --primary-glass: rgba(255, 255, 255, 0.25);
-      --glass-hover: rgba(255, 255, 255, 0.35);
-      --glass-active: rgba(255, 255, 255, 0.45);
-      --glass-border: rgba(255, 255, 255, 0.18);
-      --glass-highlight: rgba(255, 255, 255, 0.8);
-      --text-primary: #2c2c2e;
-      --text-secondary: #6c6c70;
-      --text-glass: rgba(44, 44, 46, 0.9);
-      --text-subtle: #8a8a8e;
-      --shadow-light: rgba(0, 0, 0, 0.1);
-      --shadow-medium: rgba(0, 0, 0, 0.15);
-      --shadow-heavy: rgba(0, 0, 0, 0.25);
-      --error: #ff3b30;
-      --success: #34c759;
-      --accent-glass: rgba(0, 0, 0, 0.05);
+      /* Braun Palette */
+      --braun-body: #191919;
+      --braun-button-dark: #282828;
+      --braun-button-brown: #3e3836;
+      --braun-orange: #d94e18;
+      --braun-green: #4a7a52;
+      --braun-yellow: #d4b145;
+      --braun-text: #ffffff;
+      --screen-bg: #2b302b;
+      --screen-text: #86c996; /* LCD Green */
+      --error-red: #ff3b30;
+      
+      /* Dimensions */
+      --btn-size: 48px;
+      --spacing: 16px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --primary-glass: rgba(255, 255, 255, 0.1);
-        --glass-hover: rgba(255, 255, 255, 0.15);
-        --glass-active: rgba(255, 255, 255, 0.2);
-        --glass-border: rgba(255, 255, 255, 0.12);
-        --glass-highlight: rgba(255, 255, 255, 0.4);
-        --text-primary: #f2f2f7;
-        --text-secondary: #d1d1d6;
-        --text-glass: rgba(242, 242, 247, 0.95);
-        --text-subtle: #98989d;
-        --shadow-light: rgba(0, 0, 0, 0.3);
-        --shadow-medium: rgba(0, 0, 0, 0.4);
-        --shadow-heavy: rgba(0, 0, 0, 0.6);
-        --accent-glass: rgba(255, 255, 255, 0.05);
-      }
-    }
-
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      /* Skeumorphic Desk Background */
+      background-color: #dcdcd9;
       background-image: 
-        radial-gradient(circle at 25% 25%, rgba(240, 240, 240, 0.8) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(245, 245, 245, 0.6) 0%, transparent 50%),
-        linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
-      margin: 0;
-      padding: 2rem;
-      color: var(--text-primary);
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: #1c1c1e;
-        background-image: 
-          radial-gradient(circle at 25% 25%, rgba(60, 60, 67, 0.3) 0%, transparent 50%),
-          radial-gradient(circle at 75% 75%, rgba(72, 72, 74, 0.2) 0%, transparent 50%),
-          linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-      }
-    }
-
-    /* 3D Glass Environment */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: 
-        conic-gradient(from 0deg at 50% 50%, 
-          rgba(255, 255, 255, 0.02) 0deg,
-          rgba(255, 255, 255, 0.08) 90deg,
-          rgba(255, 255, 255, 0.02) 180deg,
-          rgba(255, 255, 255, 0.08) 270deg,
-          rgba(255, 255, 255, 0.02) 360deg);
-      animation: rotate 30s linear infinite;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .calculator {
-      background: var(--primary-glass);
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-      padding: 3rem;
-      border-radius: 24px;
-      max-width: 650px;
-      margin: 2rem auto;
-      border: 1px solid var(--glass-border);
-      position: relative;
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
-      
-      /* 3D Glass Effect */
-      box-shadow: 
-        0 8px 32px var(--shadow-light),
-        0 4px 16px var(--shadow-medium),
-        inset 0 1px 0 var(--glass-highlight),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-      
-      /* Glass Reflection */
-      background-image: 
-        linear-gradient(135deg, 
-          rgba(255, 255, 255, 0.4) 0%, 
-          transparent 20%, 
-          transparent 80%, 
-          rgba(255, 255, 255, 0.2) 100%);
-    }
-
-    .calculator::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 40%;
-      background: linear-gradient(180deg, 
-        rgba(255, 255, 255, 0.15) 0%, 
-        rgba(255, 255, 255, 0.05) 50%,
-        transparent 100%);
-      border-radius: 24px 24px 0 0;
-      pointer-events: none;
-    }
-
-    .calculator::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      right: 2px;
-      bottom: 2px;
-      border-radius: 22px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      pointer-events: none;
-    }
-
-    .calculator:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 
-        0 16px 64px var(--shadow-medium),
-        0 8px 32px var(--shadow-heavy),
-        inset 0 1px 0 var(--glass-highlight),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      margin-bottom: 1rem;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-glass);
-      letter-spacing: -0.02em;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-      position: relative;
-    }
-
-    .subtitle {
-      margin-top: -0.5rem;
-      margin-bottom: 2rem;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      padding: 1.5rem;
-      background: var(--primary-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 16px;
-      border: 1px solid var(--glass-border);
-      position: relative;
-      
-      box-shadow: 
-        0 4px 16px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-      
-      background-image: 
-        linear-gradient(135deg, 
-          rgba(255, 255, 255, 0.3) 0%, 
-          transparent 30%, 
-          transparent 70%, 
-          rgba(255, 255, 255, 0.1) 100%);
-    }
-
-    .subtitle strong {
-      color: var(--text-primary);
-      font-weight: 600;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Dark mode specific subtitle improvements */
-    @media (prefers-color-scheme: dark) {
-      .subtitle {
-        color: var(--text-secondary);
-        background: rgba(255, 255, 255, 0.12);
-      }
-      
-      .subtitle strong {
-        color: var(--text-primary);
-        font-weight: 600;
-      }
-    }
-
-    label {
-      display: block;
-      margin: 1.5rem 0 0.75rem;
-      font-weight: 600;
-      color: var(--text-glass);
-      font-size: 0.95rem;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    }
-
-    input {
-      width: 100%;
-      padding: 1rem;
-      font-size: 1rem;
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      background: var(--primary-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      color: var(--text-primary);
-      transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
-      font-family: inherit;
-      font-weight: 500;
-      
-      /* 3D Glass Input Effect */
-      box-shadow: 
-        inset 0 2px 4px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        0 1px 2px rgba(0, 0, 0, 0.05);
-      
-      background-image: 
-        linear-gradient(145deg, 
-          rgba(255, 255, 255, 0.25) 0%, 
-          transparent 40%, 
-          transparent 60%, 
-          rgba(255, 255, 255, 0.1) 100%);
-    }
-
-    input:focus {
-      outline: none;
-      border-color: rgba(255, 255, 255, 0.4);
-      transform: translateY(-2px);
-      box-shadow: 
-        inset 0 2px 4px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6),
-        0 4px 12px rgba(0, 0, 0, 0.15),
-        0 0 0 3px rgba(255, 255, 255, 0.2);
-    }
-
-    input:hover {
-      background: var(--glass-hover);
-      transform: translateY(-1px);
-      box-shadow: 
-        inset 0 2px 4px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-        0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    input::placeholder {
-      color: var(--text-subtle);
-      opacity: 0.8;
-    }
-
-    #price {
-      font-size: 1.2rem;
-      font-weight: 600;
-      padding: 1.25rem;
-      background: var(--glass-active);
-      box-shadow: 
-        inset 0 3px 6px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-        0 2px 4px rgba(0, 0, 0, 0.08);
-    }
-
-    .group {
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"),
+        linear-gradient(#dcdcd9, #b0b0ad);
       display: flex;
-      gap: 1rem;
-      margin-top: 0.75rem;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
 
-    .group input {
-      flex: 1;
-    }
-
-    .result {
-      margin-top: 2rem;
-      padding: 2rem;
-      background: var(--primary-glass);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      border-radius: 20px;
-      font-size: 1rem;
-      border: 1px solid var(--glass-border);
-      position: relative;
-      
-      /* Enhanced 3D Glass Effect for Results */
+    /* The Main Device Body */
+    .calculator-body {
+      background-color: var(--braun-body);
+      /* Subtle noise texture for plastic feel */
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E");
+      width: 100%;
+      max-width: 420px;
+      border-radius: 28px;
+      padding: 36px 28px 44px;
+      /* Deep shadow for floating effect */
       box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.12),
-        0 4px 12px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-      
-      background-image: 
-        radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
-        linear-gradient(135deg, 
-          rgba(255, 255, 255, 0.2) 0%, 
-          transparent 25%, 
-          transparent 75%, 
-          rgba(255, 255, 255, 0.15) 100%);
+        0 50px 80px -20px rgba(0,0,0,0.6),
+        0 10px 20px -5px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.15),
+        inset 0 0 20px rgba(0,0,0,0.5); /* Inner darkening */
+      position: relative;
     }
-
-    .result::before {
+    
+    /* Side reflection for 3D realism */
+    .calculator-body::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 50%;
-      background: linear-gradient(180deg, 
-        rgba(255, 255, 255, 0.2) 0%, 
-        rgba(255, 255, 255, 0.05) 50%,
-        transparent 100%);
-      border-radius: 20px 20px 0 0;
+      top: 30px; bottom: 30px; left: 12px; width: 2px;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.08), transparent);
+      filter: blur(2px);
+    }
+
+    /* Branding */
+    .brand {
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+      opacity: 0.9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+    }
+    
+    .brand span { font-weight: 400; opacity: 0.6; font-size: 11px; margin-left: 6px; }
+
+    /* The Main Screen (Price Input) */
+    .lcd-screen-container {
+      background: #0a0a0a;
+      padding: 8px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      box-shadow: 
+        inset 0 2px 4px rgba(0,0,0,0.8),
+        0 1px 0 rgba(255,255,255,0.1),
+        0 -1px 0 rgba(0,0,0,0.5);
+    }
+
+    .lcd-screen {
+      background-color: var(--screen-bg);
+      border-radius: 4px;
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      /* Inner shadow for depth */
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+    }
+
+    /* Scanlines effect */
+    .lcd-screen::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.05),
+        rgba(0,0,0,0.05) 1px,
+        transparent 1px,
+        transparent 3px
+      );
       pointer-events: none;
+      z-index: 1;
+    }
+    
+    /* Screen Glare */
+    .lcd-screen::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.07), transparent 15%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .screen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 3;
+    }
+
+    .screen-label {
+      color: var(--screen-text);
+      font-size: 10px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Error Indicator on Screen */
+    .error-indicator {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--error-red); /* Red LED style */
+      font-size: 10px;
+      text-transform: uppercase;
+      opacity: 0; /* Hidden by default */
+      text-shadow: 0 0 5px rgba(255, 59, 48, 0.5);
+      transition: opacity 0.2s;
+      background: rgba(50, 0, 0, 0.5);
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+    
+    .error-indicator.visible { opacity: 1; }
+
+    input#price {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--screen-text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 38px;
+      text-align: right;
+      outline: none;
+      text-shadow: 0 0 5px rgba(134, 201, 150, 0.5);
+      padding: 0;
+      margin-top: 4px;
+      z-index: 3;
+      caret-color: var(--screen-text);
+    }
+    
+    input#price::placeholder {
+      color: var(--screen-text);
+      opacity: 0.3;
+    }
+
+    /* --- Memory Bank Controls --- */
+    .memory-bank {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 0 4px;
+    }
+
+    .mem-btn {
+      width: 42px;
+      height: 28px;
+      border-radius: 4px;
+      border: none;
+      background: #2a2a2a;
+      color: #888;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 
+        0 2px 4px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      transition: all 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mem-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(rgba(255,255,255,0.05), transparent);
+    }
+
+    .mem-btn:active {
+      transform: translateY(1px);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+      background: #222;
+    }
+
+    .mem-btn.saved-flash {
+      animation: flashGreen 0.4s ease-out;
+    }
+
+    @keyframes flashGreen {
+      0% { background-color: var(--braun-green); color: white; }
+      100% { background-color: #2a2a2a; color: #888; }
+    }
+
+    .mem-btn.reset {
+      background: var(--braun-yellow);
+      color: #222;
+      box-shadow: 
+        0 2px 4px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    
+    .mem-btn.reset:active {
+      background: #bfa03e;
+      color: #111;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .mem-label {
+      font-size: 9px;
+      color: #555;
+      text-align: center;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+
+    /* The Configuration Grid (Commission Splits) */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      color: #888;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 2px;
+      font-weight: 600;
+    }
+
+    .analog-input {
+      width: 100%;
+      background-color: var(--braun-button-dark);
+      border: none;
+      border-radius: 6px; 
+      color: white;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      transition: all 0.15s ease-out;
+      
+      /* Physical key look */
+      box-shadow: 
+        0 4px 0 #151515,
+        0 6px 6px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      transform: translateY(0);
+      
+      /* Subtle noise on keys too */
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    }
+
+    .analog-input:focus {
+      outline: none;
+      background-color: #333;
+      transform: translateY(2px);
+      box-shadow: 
+        0 2px 0 #151515,
+        inset 0 0 0 1px var(--braun-orange);
+    }
+
+    /* Divider Line */
+    .divider {
+      height: 2px;
+      background: #111;
+      margin: 0 -28px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Results Section */
+    .results-section {
+      display: grid;
+      gap: 20px;
     }
 
     .result-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.25rem;
-      padding: 0.75rem 0;
-      position: relative;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      align-items: center;
     }
 
-    .result-row:last-child {
-      margin-bottom: 0;
-      border-bottom: none;
+    .result-info {
+      display: flex;
+      flex-direction: column;
     }
 
     .result-label {
-      flex: 1;
-      font-weight: 500;
-      color: var(--text-secondary);
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+      color: #777;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      font-weight: 600;
     }
 
     .result-value {
-      flex: 0 0 auto;
-      text-align: right;
-      min-width: 140px;
-      margin-left: 1rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      font-size: 1.05rem;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+      color: #fff;
+      font-size: 20px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      letter-spacing: -0.5px;
     }
 
     .result-value.negative {
-      color: var(--error);
+      color: var(--braun-orange); 
     }
 
-    .copy-button-inline {
-      background: var(--primary-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      color: var(--text-primary);
-      border: 1px solid var(--glass-border);
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
+    /* The Tactile Buttons */
+    .btn-round {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
       cursor: pointer;
-      font-size: 0.8rem;
-      margin-left: 0.75rem;
-      font-weight: 600;
-      transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
-      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       
-      /* 3D Button Effect */
+      /* Convex Button Shape */
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent), var(--braun-button-brown);
       box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-      
-      background-image: 
-        linear-gradient(145deg, 
-          rgba(255, 255, 255, 0.3) 0%, 
-          transparent 50%, 
-          rgba(255, 255, 255, 0.1) 100%);
+        0 4px 6px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+      transition: transform 0.1s, box-shadow 0.1s;
     }
 
-    .copy-button-inline::before {
-      content: '';
-      position: absolute;
-      top: 1px;
-      left: 1px;
-      right: 1px;
-      height: 50%;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent);
-      border-radius: 6px 6px 0 0;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .copy-button-inline:hover {
-      transform: translateY(-2px);
-      background: var(--glass-hover);
+    .btn-round:active {
+      transform: translateY(2px);
       box-shadow: 
-        0 4px 16px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        0 1px 2px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(0,0,0,0.2);
     }
 
-    .copy-button-inline:hover::before {
-      opacity: 1;
-    }
-
-    .copy-button-inline:active {
-      transform: translateY(0);
+    .btn-orange {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent), var(--braun-orange);
       box-shadow: 
-        0 1px 4px rgba(0, 0, 0, 0.2),
-        inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        0 4px 8px rgba(217, 78, 24, 0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
     }
     
-    /* -- NEW -- Class for 'copied' state */
-    .copy-button-inline.copied {
-        background-color: var(--success);
-        background-image: none;
-        color: #fff;
-        border-color: rgba(52, 199, 89, 0.5);
+    .btn-dark {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent), #222;
     }
-
 
     .footer {
+      margin-top: 36px;
       text-align: center;
-      margin-top: 3rem;
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      background: var(--primary-glass);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      padding: 2rem;
-      border-radius: 20px;
-      border: 1px solid var(--glass-border);
-      
-      box-shadow: 
-        0 4px 16px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-      
-      background-image: 
-        linear-gradient(135deg, 
-          rgba(255, 255, 255, 0.15) 0%, 
-          transparent 50%, 
-          rgba(255, 255, 255, 0.1) 100%);
+      color: #444;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.05);
     }
+    
+    .footer a { color: #555; text-decoration: none; }
 
-    .footer a {
-      color: var(--text-primary);
-      text-decoration: none;
+    /* Tooltip for Copy */
+    .copy-feedback {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--braun-orange);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 4px; /* Squarer for industrial look */
       font-weight: 600;
-      transition: all 0.3s ease;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
+    
+    .copy-feedback.visible { opacity: 1; }
+    
+    /* Error Banner */
+    .error-banner {
+      background: rgba(217, 78, 24, 0.1);
+      border: 1px solid var(--braun-orange);
+      color: var(--braun-orange);
+      font-size: 11px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-top: 16px;
+      display: none;
+      text-align: center;
+    }
+    .error-banner.visible { display: block; }
+    
+    /* Memory Feedback Toast */
+    .memory-toast {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: var(--braun-green);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .memory-toast.visible { opacity: 1; }
 
-    .footer a:hover {
-      color: var(--text-glass);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    .pulse {
-      animation: pulseGlass 0.6s ease-out;
-    }
-
-    @keyframes pulseGlass {
-      0% { 
-        background-color: var(--glass-active);
-        transform: scale(1.01);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3),
-                    0 8px 24px rgba(0, 0, 0, 0.12),
-                    0 4px 12px rgba(0, 0, 0, 0.08),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-      }
-      100% { 
-        background-color: var(--primary-glass);
-        transform: scale(1);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12),
-                    0 4px 12px rgba(0, 0, 0, 0.08),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-      }
-    }
-
-    .warning {
-      color: var(--error);
-      font-size: 0.9rem;
-      margin-top: 1.5rem;
-      padding: 1.25rem;
-      background: var(--primary-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 59, 48, 0.3);
-      font-weight: 600;
-      
-      box-shadow: 
-        0 4px 12px rgba(255, 59, 48, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-      body {
-        padding: 1rem;
-      }
-      
-      .calculator {
-        padding: 2rem;
-        margin: 1rem auto;
-        border-radius: 20px;
-      }
-      
-      h2 {
-        font-size: 1.6rem;
-      }
-      
-      .group {
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-      
-      .result-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-      }
-      
-      .result-value {
-        min-width: auto;
-        margin-left: 0;
-        justify-content: flex-start;
-      }
-    }
-
-    /* Enhanced glass refractions */
-    .calculator:hover .result {
-      background-image: 
-        radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.4) 0%, transparent 60%),
-        linear-gradient(135deg, 
-          rgba(255, 255, 255, 0.25) 0%, 
-          transparent 30%, 
-          transparent 70%, 
-          rgba(255, 255, 255, 0.2) 100%);
-    }
   </style>
-  <!-- Open Graph / Facebook -->
-<meta property="og:title" content="BC Real Estate Commission Calculator" />
-<meta property="og:description" content="A dynamic, beautifully designed calculator for realtors in British Columbia. Adjust values and splits in real time." />
-<meta property="og:url" content="https://joaosqra.github.io/BC-Real-Estate-Commission-Calculator/" />
-<meta property="og:type" content="website" />
-<meta property="og:image" content="https://i.postimg.cc/X7pdtJyJ/SCR-20250616-nnqs.png" />
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="BC Real Estate Commission Calculator" />
-<meta name="twitter:description" content="A clean, responsive tool for BC realtors. Designed for clarity and ease." />
-<meta name="twitter:image" content="https://i.postimg.cc/X7pdtJyJ/SCR-20250616-nnqs.png" />
-
-<!-- Favicon -->
-<link rel="icon" type="image/png" href="https://github.com/andrewtavis/sf-symbols-online/blob/master/glyphs/pencil.and.outline.png?raw=true" />
-
 </head>
 <body>
-  <div class="calculator" id="calculator">
-    <h2>Commission Calculator</h2>
-    <div class="subtitle">
-      A simple and accurate real estate commission calculator built specifically for <strong>British Columbia, Canada</strong>. This tool follows the typical BC structure: <strong>7%</strong> on the first $100,000 and <strong>3%</strong> on the remaining balance, with a buyer's agent split often at <strong>3.255%</strong> and <strong>1.1625%</strong>. You can adjust values as needed. Designed for clarity, ease of use, and fast results.
+
+  <div class="calculator-body">
+    
+    <div class="brand">
+      <div>BRAUN <span>ET66</span></div>
+      <div style="width: 40px; height: 12px; background: #222; border-radius: 2px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);"></div> <!-- Solar Sensor -->
     </div>
 
-    <label for="price">Offer Price</label>
-    <input type="text" id="price" value="" placeholder="Enter property price..." />
-
-    <label>Total Commission</label>
-    <div class="group">
-      <input type="text" id="total_first" value="7%" placeholder="First $100K" />
-      <input type="text" id="total_rest" value="3%" placeholder="Balance" />
-    </div>
-
-    <label>Co-operating Agent</label>
-    <div class="group">
-      <input type="text" id="coop_first" value="3.255%" placeholder="First $100K" />
-      <input type="text" id="coop_rest" value="1.1625%" placeholder="Balance" />
-    </div>
-
-    <div class="result" id="result-block">
-      <div class="result-row">
-        <div class="result-label">Gross Commission:</div>
-        <div class="result-value">
-            <span id="gross"></span>
-            <button class="copy-button-inline" onclick="copySingle('gross', event)">Copy</button>
+    <!-- MAIN DISPLAY -->
+    <div class="lcd-screen-container">
+      <div class="lcd-screen">
+        <div class="screen-header">
+            <div class="screen-label">Offer Price</div>
+            <div class="error-indicator" id="screen-error">ERROR</div>
         </div>
-      </div>
-      <div class="result-row">
-        <div class="result-label">Buyer's Agent Commission:</div>
-        <div class="result-value">
-            <span id="coop"></span>
-            <button class="copy-button-inline" onclick="copySingle('coop', event)">Copy</button>
-        </div>
-      </div>
-      <div class="result-row">
-        <div class="result-label">Listing Agent Commission:</div>
-        <div class="result-value" id="listing-wrap">
-            <span id="listing"></span>
-            <button class="copy-button-inline" onclick="copySingle('listing', event)">Copy</button>
-        </div>
-      </div>
-      <div class="result-row">
-        <div class="result-label">GST (5% on Gross):</div>
-        <div class="result-value">
-            <span id="gst"></span>
-        </div>
+        <input type="text" id="price" placeholder="0" inputmode="numeric" />
+        <div id="mem-feedback" class="memory-toast">SAVED TO M1</div>
       </div>
     </div>
+
+    <!-- MEMORY CONTROLS -->
+    <div class="memory-bank">
+        <div>
+            <button class="mem-btn reset" onclick="resetDefaults()" title="Reset to BC Default">C</button>
+            <div class="mem-label">Reset</div>
+        </div>
+        <div>
+            <button class="mem-btn" id="m1-btn">M1</button>
+            <div class="mem-label">Hold Save</div>
+        </div>
+        <div>
+            <button class="mem-btn" id="m2-btn">M2</button>
+            <div class="mem-label">Hold Save</div>
+        </div>
+        <div>
+            <button class="mem-btn" id="m3-btn">M3</button>
+            <div class="mem-label">Hold Save</div>
+        </div>
+    </div>
+
+    <!-- CONFIGURATION INPUTS -->
+    <div class="controls-grid">
+      <div class="input-group">
+        <label>Gross (1st 100k)</label>
+        <input class="analog-input" type="text" id="total_first" value="7%" />
+      </div>
+      <div class="input-group">
+        <label>Gross (Bal)</label>
+        <input class="analog-input" type="text" id="total_rest" value="3%" />
+      </div>
+      <div class="input-group">
+        <label>Co-op (1st 100k)</label>
+        <input class="analog-input" type="text" id="coop_first" value="3.255%" />
+      </div>
+      <div class="input-group">
+        <label>Co-op (Bal)</label>
+        <input class="analog-input" type="text" id="coop_rest" value="1.1625%" />
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- RESULTS (Readouts) -->
+    <div class="results-section">
+      
+      <!-- Row 1: Gross -->
+      <div class="result-row">
+        <div class="result-info">
+          <span class="result-label">Total Commission</span>
+          <span class="result-value" id="gross">$0.00</span>
+        </div>
+        <button class="btn-round" onclick="copySingle('gross')">Copy</button>
+      </div>
+
+      <!-- Row 2: Listing Agent (Swapped Up) -->
+      <div class="result-row">
+        <div class="result-info">
+          <span class="result-label" style="color: #fff; font-weight: 600;">Listing Agent</span>
+          <span class="result-value" id="listing">$0.00</span>
+        </div>
+        <!-- Orange Button for Primary Action -->
+        <button class="btn-round btn-orange" onclick="copySingle('listing')">Copy</button>
+      </div>
+
+      <!-- Row 3: Buyer's Agent (Swapped Down) -->
+      <div class="result-row">
+        <div class="result-info">
+          <span class="result-label">Buyer's Agent</span>
+          <span class="result-value" id="coop">$0.00</span>
+        </div>
+        <button class="btn-round btn-dark" onclick="copySingle('coop')">Copy</button>
+      </div>
+
+       <!-- Row 4: GST -->
+       <div class="result-row">
+        <div class="result-info">
+          <span class="result-label">GST (5%)</span>
+          <span class="result-value" id="gst" style="opacity: 0.6; font-size: 16px;">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Error Message Area -->
+      <div id="error-msg" class="error-banner">
+        ⚠️ Listing commission is negative. Check splits.
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Designed in BC 🇨🇦 by <a href="https://www.linkedin.com/in/joaosqra/" target="_blank">@joaosqra</a>
+    </div>
+
   </div>
 
-  <div class="footer">
-    &copy; 2025 – Made with ❤️ in Canada 🇨🇦 by <a href="https://www.linkedin.com/in/joaosqra/" target="_blank">@joaosqra</a>
-  </div>
+  <!-- Feedback Toast -->
+  <div id="toast" class="copy-feedback">Copied</div>
 
   <script>
-    // --- UTILITY FUNCTIONS ---
-    function formatCurrency(value) {
-      return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(value);
-    }
+    // --- Configuration ---
+    const DEFAULTS = {
+        totalFirst: "7%",
+        totalRest: "3%",
+        coopFirst: "3.255%",
+        coopRest: "1.1625%"
+    };
 
-    function parsePercent(value) {
-      if (!value || value.trim() === '%' || value.trim() === '') return 0;
-      return parseFloat(value.replace(/[%]/g, '')) / 100 || 0;
-    }
+    // --- Logic ---
+    const formatCurrency = (val) => 
+      new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(val);
 
-    function parseNumber(value) {
-      if (!value) return 0;
-      return parseFloat(String(value).replace(/[,]/g, '')) || 0;
-    }
+    const parsePercent = (val) => {
+      if (!val) return 0;
+      return parseFloat(val.replace(/[^0-9.]/g, '')) / 100 || 0;
+    };
 
-    function formatNumberWithCommas(value) {
-        if (value === 0) return '';
-        return value.toLocaleString('en-CA');
-    }
+    const parseNumber = (val) => {
+      if (!val) return 0;
+      return parseFloat(String(val).replace(/,/g, '')) || 0;
+    };
 
-    function formatPercent(value) {
-      if (value === 0) return '';
-      let scaled = value * 100;
-      // Use toFixed to handle floating point inaccuracies before checking for integers
-      if (Number.isInteger(Number(scaled.toFixed(5)))) {
-          return scaled.toFixed(0) + '%';
-      }
-      // Clean up trailing zeros and unnecessary decimals
-      return parseFloat(scaled.toFixed(4)).toString() + '%';
-    }
+    const formatNumberWithCommas = (val) => {
+      if (!val) return '';
+      return val.toLocaleString('en-CA');
+    };
 
-    // --- MAIN CALCULATION LOGIC ---
     function calculate() {
-      const price = parseNumber(document.getElementById('price').value);
+      const priceVal = document.getElementById('price').value;
+      const price = parseNumber(priceVal);
+
+      // Get Split Configs
       const totalFirst = parsePercent(document.getElementById('total_first').value);
       const totalRest = parsePercent(document.getElementById('total_rest').value);
       const coopFirst = parsePercent(document.getElementById('coop_first').value);
       const coopRest = parsePercent(document.getElementById('coop_rest').value);
 
+      // Logic
       const first100k = Math.min(100000, price);
       const remaining = Math.max(0, price - 100000);
 
@@ -696,85 +641,174 @@
       const listing = gross - coop;
       const gst = gross * 0.05;
 
-      // Update UI elements
+      // Render
       document.getElementById('gross').innerText = formatCurrency(gross);
       document.getElementById('coop').innerText = formatCurrency(coop);
       document.getElementById('listing').innerText = formatCurrency(listing);
       document.getElementById('gst').innerText = formatCurrency(gst);
 
-      // Add visual feedback
-      document.getElementById('listing-wrap').classList.toggle('negative', listing < 0);
-      manageWarning(listing < 0);
+      // Error indication
+      const listingEl = document.getElementById('listing');
+      const errorMsg = document.getElementById('error-msg');
+      const screenError = document.getElementById('screen-error');
+      
+      if (listing < 0) {
+        listingEl.classList.add('negative');
+        errorMsg.classList.add('visible');
+        screenError.classList.add('visible');
+      } else {
+        listingEl.classList.remove('negative');
+        errorMsg.classList.remove('visible');
+        screenError.classList.remove('visible');
+      }
+    }
+
+    // --- Memory Functions ---
+    function setupMemoryButtons() {
+        ['m1', 'm2', 'm3'].forEach(id => {
+            const btn = document.getElementById(id + '-btn');
+            let pressTimer;
+
+            // Mouse events
+            btn.addEventListener('mousedown', () => {
+                pressTimer = window.setTimeout(() => saveToMemory(id), 600);
+            });
+            btn.addEventListener('mouseup', () => {
+                clearTimeout(pressTimer);
+            });
+            btn.addEventListener('click', (e) => {
+                // If it was a short click (timer didn't fire)
+                if (e.detail === 1) loadFromMemory(id);
+            });
+
+            // Touch events for mobile
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // prevent mouse emulation
+                pressTimer = window.setTimeout(() => saveToMemory(id), 600);
+            });
+            btn.addEventListener('touchend', () => {
+                clearTimeout(pressTimer);
+                // Simple touch load logic (if not saved)
+                // This is simplified; ideally we check duration
+            });
+        });
+    }
+
+    function saveToMemory(slot) {
+        const config = {
+            totalFirst: document.getElementById('total_first').value,
+            totalRest: document.getElementById('total_rest').value,
+            coopFirst: document.getElementById('coop_first').value,
+            coopRest: document.getElementById('coop_rest').value
+        };
+        localStorage.setItem('calc_mem_' + slot, JSON.stringify(config));
+        
+        // Feedback
+        const btn = document.getElementById(slot + '-btn');
+        btn.classList.add('saved-flash');
+        setTimeout(() => btn.classList.remove('saved-flash'), 400);
+        
+        showMemoryFeedback(`SAVED TO ${slot.toUpperCase()}`);
+    }
+
+    function loadFromMemory(slot) {
+        const saved = localStorage.getItem('calc_mem_' + slot);
+        if (saved) {
+            const config = JSON.parse(saved);
+            document.getElementById('total_first').value = config.totalFirst;
+            document.getElementById('total_rest').value = config.totalRest;
+            document.getElementById('coop_first').value = config.coopFirst;
+            document.getElementById('coop_rest').value = config.coopRest;
+            calculate();
+            showMemoryFeedback(`LOADED ${slot.toUpperCase()}`);
+        } else {
+            showMemoryFeedback(`${slot.toUpperCase()} EMPTY`);
+        }
+    }
+
+    function resetDefaults() {
+        document.getElementById('total_first').value = DEFAULTS.totalFirst;
+        document.getElementById('total_rest').value = DEFAULTS.totalRest;
+        document.getElementById('coop_first').value = DEFAULTS.coopFirst;
+        document.getElementById('coop_rest').value = DEFAULTS.coopRest;
+        calculate();
+        showMemoryFeedback("RESET DEFAULTS");
+    }
+
+    function showMemoryFeedback(text) {
+        const el = document.getElementById('mem-feedback');
+        el.innerText = text;
+        el.classList.add('visible');
+        setTimeout(() => el.classList.remove('visible'), 1500);
+    }
+
+
+    // --- Input Formatting ---
+    function handleFocus(e) {
+      let val = e.target.value;
+      if (e.target.id === 'price') {
+        val = val.replace(/,/g, '');
+      } else {
+        val = val.replace('%', '');
+      }
+      e.target.value = val;
+      e.target.select();
+    }
+
+    function handleBlur(e) {
+      if (e.target.id === 'price') {
+        const num = parseNumber(e.target.value);
+        if (num > 0) e.target.value = formatNumberWithCommas(num);
+      } else {
+        let raw = parseFloat(e.target.value);
+        if (!isNaN(raw)) {
+           e.target.value = raw + '%';
+        }
+      }
+      calculate();
     }
     
-    // --- UI MANAGEMENT ---
-    function manageWarning(show) {
-        const errorMessage = '⚠️ Total commission must exceed Co‑operating Agent commission';
-        const existingWarning = document.getElementById('warning');
-        const coopGroup = document.getElementById('coop_rest').closest('.group');
-
-        if (show) {
-            if (!existingWarning) {
-                const warnEl = document.createElement('div');
-                warnEl.id = 'warning';
-                warnEl.className = 'warning';
-                warnEl.textContent = errorMessage;
-                coopGroup.after(warnEl);
+    // Strict input filter for Price
+    function restrictInput(e) {
+        if (e.target.id === 'price') {
+            const clean = e.target.value.replace(/[^0-9]/g, '');
+            if (clean !== e.target.value) {
+                e.target.value = clean;
             }
-        } else if (existingWarning) {
-            existingWarning.remove();
+            calculate();
         }
     }
 
-    function formatOnFocus(event) {
-        const input = event.target;
-        if (input.id !== 'price') {
-            input.value = input.value.replace(/[%]/g, '');
-        }
-    }
-
-    function formatOnBlur(event) {
-        const input = event.target;
-        if (input.id === 'price') {
-            const price = parseNumber(input.value);
-            input.value = formatNumberWithCommas(price);
-        } else {
-            const percent = parsePercent(input.value);
-            input.value = formatPercent(percent);
-        }
-        // Recalculate after formatting
-        calculate();
-    }
-
-    function copySingle(id, event) {
-      const value = document.getElementById(id).innerText.replace(/[^\d.]/g, '');
-      navigator.clipboard.writeText(value).then(() => {
-        const button = event.target;
-        const originalText = button.textContent;
-        
-        // Add class to change style via CSS
-        button.classList.add('copied');
-        button.textContent = 'Copied!';
-        
-        // Revert after a delay
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.classList.remove('copied');
-        }, 1200);
-
-      }).catch(err => {
-        console.error('Failed to copy text: ', err);
+    // --- Clipboard ---
+    function copySingle(id) {
+      const rawText = document.getElementById(id).innerText;
+      const val = rawText.replace(/[^\d.]/g, '');
+      
+      navigator.clipboard.writeText(val).then(() => {
+        showToast();
       });
     }
 
-    // --- EVENT LISTENERS ---
+    function showToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.add('visible');
+        setTimeout(() => toast.classList.remove('visible'), 1500);
+    }
+
+    // --- Init ---
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', calculate);
-        input.addEventListener('focus', formatOnFocus);
-        input.addEventListener('blur', formatOnBlur);
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(i => {
+        if(i.id === 'price') {
+             i.addEventListener('input', restrictInput);
+        } else {
+             i.addEventListener('input', calculate);
+        }
+        i.addEventListener('focus', handleFocus);
+        i.addEventListener('blur', handleBlur);
       });
-      // Initial calculation on page load
+      
+      setupMemoryButtons();
       calculate();
     });
   </script>
