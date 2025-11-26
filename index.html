@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Optimized Viewport for Web App Mode (No Zoom, Covers Notch) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   
+  <!-- iOS Web App Meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#191919">
+
   <!-- SEO & METADATA -->
   <title>BC Real Estate Commission Calculator | Realtor Split Tool</title>
   <meta name="description" content="Free BC real estate commission calculator. Instantly calculate listing and buyer agent splits, gross commission, and GST. Customizable rates for British Columbia realtors." />
@@ -87,6 +93,7 @@
       margin: 0;
       padding: 20px;
       transition: background 0.5s ease;
+      overscroll-behavior: none; /* Prevents bounce scroll on mobile */
     }
 
     /* The Main Device Body */
@@ -591,6 +598,41 @@
       .footer {
         color: #666;
         text-shadow: none;
+      }
+    }
+
+    /* --- MOBILE APP MODE --- */
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+        margin: 0;
+        background: var(--braun-body); /* Remove desk, match device */
+        align-items: flex-start;
+        overflow-x: hidden;
+      }
+
+      .calculator-body {
+        width: 100%;
+        max-width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0;
+        /* Handle Safe Areas for iPhone X+ */
+        padding-top: max(32px, env(safe-area-inset-top)); 
+        padding-bottom: max(32px, env(safe-area-inset-bottom));
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      /* Remove the 3D side bevel effect on mobile since it's flat screen now */
+      .calculator-body::before {
+        display: none;
+      }
+      
+      /* Adjust Brand for safe area */
+      .brand {
+        margin-top: 10px;
       }
     }
 
