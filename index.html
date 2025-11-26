@@ -82,10 +82,11 @@
         linear-gradient(#dcdcd9, #b0b0ad);
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start; /* Changed to flex-start to prevent clipping on mobile */
       min-height: 100vh;
       margin: 0;
       padding: 20px;
+      transition: background 0.5s ease;
     }
 
     /* The Main Device Body */
@@ -95,6 +96,7 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E");
       width: 100%;
       max-width: 420px;
+      margin: auto; /* Centers vertically when space allows */
       border-radius: 28px;
       padding: 36px 28px 44px;
       /* Deep shadow for floating effect */
@@ -141,6 +143,7 @@
         inset 0 2px 4px rgba(0,0,0,0.8),
         0 1px 0 rgba(255,255,255,0.1),
         0 -1px 0 rgba(0,0,0,0.5);
+      transition: box-shadow 0.3s ease;
     }
 
     .lcd-screen {
@@ -155,6 +158,7 @@
       justify-content: space-between;
       /* Inner shadow for depth */
       box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     /* Scanlines effect */
@@ -196,6 +200,7 @@
       text-transform: uppercase;
       opacity: 0.7;
       font-family: 'Share Tech Mono', monospace;
+      transition: text-shadow 0.3s ease;
     }
 
     /* Error Indicator on Screen */
@@ -228,6 +233,7 @@
       margin-top: 4px;
       z-index: 3;
       caret-color: var(--screen-text);
+      transition: text-shadow 0.3s ease;
     }
     
     input#price::placeholder {
@@ -401,6 +407,7 @@
       font-family: 'Inter', sans-serif;
       font-weight: 500;
       letter-spacing: -0.5px;
+      transition: text-shadow 0.3s ease;
     }
 
     .result-value.negative {
@@ -427,7 +434,7 @@
       box-shadow: 
         0 4px 6px rgba(0,0,0,0.4),
         inset 0 1px 0 rgba(255,255,255,0.12);
-      transition: transform 0.1s, box-shadow 0.1s;
+      transition: transform 0.1s, box-shadow 0.1s, text-shadow 0.3s ease;
     }
 
     .btn-round:active {
@@ -515,6 +522,78 @@
     }
     .memory-toast.visible { opacity: 1; }
 
+    /* --- DARK MODE (Lit Up Effect) --- */
+    @media (prefers-color-scheme: dark) {
+      body {
+        /* Darker, "night time" desk environment */
+        background-color: #1a1a1a;
+        background-image: 
+          radial-gradient(circle at 50% 50%, rgba(40,40,40,0.8) 0%, transparent 60%),
+          url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"),
+          linear-gradient(#1a1a1a, #0d0d0d);
+      }
+
+      /* Glowing LCD Screen */
+      .lcd-screen-container {
+        /* Faint outer glow from screen leakage */
+        box-shadow: 
+          inset 0 2px 4px rgba(0,0,0,1),
+          0 0 15px rgba(134, 201, 150, 0.05); 
+      }
+      
+      .lcd-screen {
+        /* Slightly lighter background to simulate backlight bleed */
+        background-color: #333a33; 
+        box-shadow: inset 0 0 30px rgba(134, 201, 150, 0.2);
+      }
+      
+      /* Glowing Text on Screen */
+      input#price, .error-indicator.visible {
+        text-shadow: 0 0 10px rgba(134, 201, 150, 0.6), 0 0 2px rgba(134, 201, 150, 0.8);
+      }
+      
+      .screen-label {
+        color: rgba(134, 201, 150, 0.8);
+        text-shadow: 0 0 5px rgba(134, 201, 150, 0.4);
+      }
+
+      /* Illuminated Buttons & Values */
+      .btn-round {
+         /* White text glows */
+         text-shadow: 0 0 6px rgba(255,255,255,0.7);
+         /* Slight button rim highlight */
+         box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+      }
+      
+      /* Analog input fields glow slightly */
+      .analog-input {
+         color: #eee;
+         text-shadow: 0 0 4px rgba(255,255,255,0.3);
+      }
+      
+      /* Result numbers glow */
+      .result-value {
+        text-shadow: 0 0 8px rgba(255,255,255,0.5);
+      }
+      
+      .result-value.negative {
+        text-shadow: 0 0 8px rgba(217, 78, 24, 0.6);
+      }
+
+      /* Calculator Body shadow deepens in dark */
+      .calculator-body {
+        box-shadow: 
+          0 50px 80px -20px rgba(0,0,0,0.9),
+          0 10px 20px -5px rgba(0,0,0,0.8),
+          inset 0 1px 0 rgba(255,255,255,0.05);
+      }
+      
+      .footer {
+        color: #666;
+        text-shadow: none;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -595,7 +674,7 @@
       <!-- Row 2: Listing Agent (Swapped Up) -->
       <div class="result-row">
         <div class="result-info">
-          <span class="result-label" style="color: #fff; font-weight: 600;">Listing Agent</span>
+          <span class="result-label">Listing Agent</span>
           <span class="result-value" id="listing">$0.00</span>
         </div>
         <!-- Orange Button for Primary Action -->
