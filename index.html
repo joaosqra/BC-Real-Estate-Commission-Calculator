@@ -2,35 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Optimized Viewport for Web App Mode (No Zoom, Covers Notch) -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  
-  <!-- iOS Web App Meta -->
+   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#191919">
 
-  <!-- SEO & METADATA -->
   <title>BC Real Estate Commission Calculator | Realtor Split Tool</title>
   <meta name="description" content="Free BC real estate commission calculator. Instantly calculate listing and buyer agent splits, gross commission, and GST. Customizable rates for British Columbia realtors." />
   <meta name="keywords" content="BC real estate calculator, realtor commission calculator, real estate commission splits BC, British Columbia realtor tools, commission GST calculator, agent fees" />
   <meta name="author" content="joaosqra" />
-  
-  <!-- Open Graph / Facebook -->
+   
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://joaosqra.github.io/BC-Real-Estate-Commission-Calculator/" />
   <meta property="og:title" content="BC Real Estate Commission Calculator" />
   <meta property="og:description" content="A professional-grade calculator for BC realtors. Calculate splits, GST, and net commissions instantly." />
   <meta property="og:image" content="https://i.postimg.cc/X7pdtJyJ/SCR-20250616-nnqs.png" />
 
-  <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://joaosqra.github.io/BC-Real-Estate-Commission-Calculator/" />
   <meta property="twitter:title" content="BC Real Estate Commission Calculator" />
   <meta property="twitter:description" content="Professional tool for calculating real estate commissions and splits in British Columbia." />
   <meta property="twitter:image" content="https://i.postimg.cc/X7pdtJyJ/SCR-20250616-nnqs.png" />
 
-  <!-- Structured Data (JSON-LD) for Google Rich Results -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -51,8 +45,7 @@
     }
   }
   </script>
-  
-  <!-- Fonts: Inter (UI) and 'Digital' font for screen -->
+   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -70,7 +63,7 @@
       --screen-bg: #2b302b;
       --screen-text: #86c996; /* LCD Green */
       --error-red: #ff3b30;
-      
+       
       /* Dimensions */
       --btn-size: 48px;
       --spacing: 16px;
@@ -94,6 +87,7 @@
       padding: 20px;
       transition: background 0.5s ease;
       overscroll-behavior: none; /* Prevents bounce scroll on mobile */
+      -webkit-tap-highlight-color: transparent; /* Removes blue tap box on iOS */
     }
 
     /* The Main Device Body */
@@ -114,7 +108,7 @@
         inset 0 0 20px rgba(0,0,0,0.5); /* Inner darkening */
       position: relative;
     }
-    
+     
     /* Side reflection for 3D realism */
     .calculator-body::before {
       content: '';
@@ -137,7 +131,7 @@
       align-items: center;
       padding: 0 4px;
     }
-    
+     
     .brand span { font-weight: 400; opacity: 0.6; font-size: 11px; margin-left: 6px; }
 
     /* The Main Screen (Price Input) */
@@ -183,7 +177,7 @@
       pointer-events: none;
       z-index: 1;
     }
-    
+     
     /* Screen Glare */
     .lcd-screen::before {
       content: '';
@@ -223,7 +217,7 @@
       padding: 2px 4px;
       border-radius: 2px;
     }
-    
+     
     .error-indicator.visible { opacity: 1; }
 
     input#price {
@@ -242,7 +236,7 @@
       caret-color: var(--screen-text);
       transition: text-shadow 0.3s ease;
     }
-    
+     
     input#price::placeholder {
       color: var(--screen-text);
       opacity: 0.3;
@@ -272,6 +266,8 @@
       transition: all 0.1s;
       position: relative;
       overflow: hidden;
+      /* Ensure touches register on the element */
+      touch-action: manipulation;
     }
 
     .mem-btn::before {
@@ -303,7 +299,7 @@
         0 2px 4px rgba(0,0,0,0.3),
         inset 0 1px 0 rgba(255,255,255,0.2);
     }
-    
+     
     .mem-btn.reset:active {
       background: #bfa03e;
       color: #111;
@@ -457,7 +453,7 @@
         0 4px 8px rgba(217, 78, 24, 0.3),
         inset 0 1px 0 rgba(255,255,255,0.2);
     }
-    
+     
     .btn-dark {
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent), #222;
     }
@@ -471,32 +467,9 @@
       letter-spacing: 1px;
       text-shadow: 0 1px 0 rgba(255,255,255,0.05);
     }
-    
+     
     .footer a { color: #555; text-decoration: none; }
-
-    /* Tooltip for Copy */
-    .copy-feedback {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--braun-orange);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 4px; /* Squarer for industrial look */
-      font-weight: 600;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 100;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-    
-    .copy-feedback.visible { opacity: 1; }
-    
+     
     /* Error Banner */
     .error-banner {
       background: rgba(217, 78, 24, 0.1);
@@ -510,24 +483,28 @@
       text-align: center;
     }
     .error-banner.visible { display: block; }
-    
-    /* Memory Feedback Toast */
-    .memory-toast {
+     
+    /* Memory / Status Feedback on LCD */
+    .screen-overlay-text {
       position: absolute;
-      top: 20px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
+      transform: translate(-50%, -50%); /* Center perfectly */
+      background: rgba(0,0,0,0.85);
       color: var(--braun-green);
-      padding: 4px 8px;
+      padding: 6px 10px;
       border-radius: 4px;
-      font-size: 10px;
+      font-size: 12px;
       font-family: 'Share Tech Mono', monospace;
       opacity: 0;
       transition: opacity 0.3s;
       pointer-events: none;
+      z-index: 10;
+      text-align: center;
+      white-space: nowrap;
+      border: 1px solid rgba(134, 201, 150, 0.3);
     }
-    .memory-toast.visible { opacity: 1; }
+    .screen-overlay-text.visible { opacity: 1; }
 
     /* --- DARK MODE (Lit Up Effect) --- */
     @media (prefers-color-scheme: dark) {
@@ -555,7 +532,7 @@
       }
       
       /* Glowing Text on Screen */
-      input#price, .error-indicator.visible {
+      input#price, .error-indicator.visible, .screen-overlay-text {
         text-shadow: 0 0 10px rgba(134, 201, 150, 0.6), 0 0 2px rgba(134, 201, 150, 0.8);
       }
       
@@ -641,13 +618,11 @@
 <body>
 
   <div class="calculator-body">
-    
+     
     <div class="brand">
       <div>BRAUN <span>ET66</span></div>
-      <div style="width: 40px; height: 12px; background: #222; border-radius: 2px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);"></div> <!-- Solar Sensor -->
-    </div>
+      <div style="width: 40px; height: 12px; background: #222; border-radius: 2px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);"></div> </div>
 
-    <!-- MAIN DISPLAY -->
     <div class="lcd-screen-container">
       <div class="lcd-screen">
         <div class="screen-header">
@@ -655,11 +630,10 @@
             <div class="error-indicator" id="screen-error">ERROR</div>
         </div>
         <input type="text" id="price" placeholder="0" inputmode="numeric" />
-        <div id="mem-feedback" class="memory-toast">SAVED TO M1</div>
+        <div id="screen-status" class="screen-overlay-text">SAVED TO M1</div>
       </div>
     </div>
 
-    <!-- MEMORY CONTROLS -->
     <div class="memory-bank">
         <div>
             <button class="mem-btn reset" onclick="resetDefaults()" title="Reset to BC Default">C</button>
@@ -679,7 +653,6 @@
         </div>
     </div>
 
-    <!-- CONFIGURATION INPUTS -->
     <div class="controls-grid">
       <div class="input-group">
         <label>Gross (1st 100k)</label>
@@ -701,10 +674,8 @@
 
     <div class="divider"></div>
 
-    <!-- RESULTS (Readouts) -->
     <div class="results-section">
       
-      <!-- Row 1: Gross -->
       <div class="result-row">
         <div class="result-info">
           <span class="result-label">Total Commission</span>
@@ -713,17 +684,14 @@
         <button class="btn-round" onclick="copySingle('gross')">Copy</button>
       </div>
 
-      <!-- Row 2: Listing Agent (Swapped Up) -->
       <div class="result-row">
         <div class="result-info">
           <span class="result-label">Listing Agent</span>
           <span class="result-value" id="listing">$0.00</span>
         </div>
-        <!-- Orange Button for Primary Action -->
         <button class="btn-round btn-orange" onclick="copySingle('listing')">Copy</button>
       </div>
 
-      <!-- Row 3: Buyer's Agent (Swapped Down) -->
       <div class="result-row">
         <div class="result-info">
           <span class="result-label">Buyer's Agent</span>
@@ -732,7 +700,6 @@
         <button class="btn-round btn-dark" onclick="copySingle('coop')">Copy</button>
       </div>
 
-       <!-- Row 4: GST -->
        <div class="result-row">
         <div class="result-info">
           <span class="result-label">GST (5%)</span>
@@ -740,7 +707,6 @@
         </div>
       </div>
 
-      <!-- Error Message Area -->
       <div id="error-msg" class="error-banner">
         ⚠️ Listing commission is negative. Check splits.
       </div>
@@ -752,9 +718,6 @@
     </div>
 
   </div>
-
-  <!-- Feedback Toast -->
-  <div id="toast" class="copy-feedback">Copied</div>
 
   <script>
     // --- Configuration ---
@@ -825,33 +788,45 @@
       }
     }
 
-    // --- Memory Functions ---
+    // --- Memory Functions (Fixed for iPhone Touch) ---
     function setupMemoryButtons() {
         ['m1', 'm2', 'm3'].forEach(id => {
             const btn = document.getElementById(id + '-btn');
             let pressTimer;
+            let isLongPress = false;
 
-            // Mouse events
+            // --- Mouse Events (Desktop) ---
             btn.addEventListener('mousedown', () => {
-                pressTimer = window.setTimeout(() => saveToMemory(id), 600);
+                isLongPress = false;
+                pressTimer = window.setTimeout(() => {
+                    isLongPress = true;
+                    saveToMemory(id);
+                }, 600);
             });
             btn.addEventListener('mouseup', () => {
                 clearTimeout(pressTimer);
             });
             btn.addEventListener('click', (e) => {
-                // If it was a short click (timer didn't fire)
-                if (e.detail === 1) loadFromMemory(id);
+                if (e.detail === 1 && !isLongPress) loadFromMemory(id);
             });
 
-            // Touch events for mobile
+            // --- Touch Events (iPhone/Android) ---
+            // Issue Fixed: Prevent default context menu but manually handle Load vs Save
             btn.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // prevent mouse emulation
-                pressTimer = window.setTimeout(() => saveToMemory(id), 600);
-            });
-            btn.addEventListener('touchend', () => {
+                e.preventDefault(); // Stop phantom clicks and iOS selection
+                isLongPress = false;
+                pressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    saveToMemory(id);
+                }, 600);
+            }, { passive: false });
+
+            btn.addEventListener('touchend', (e) => {
                 clearTimeout(pressTimer);
-                // Simple touch load logic (if not saved)
-                // This is simplified; ideally we check duration
+                // If the timer didn't fire (short tap), load the memory
+                if (!isLongPress) {
+                    loadFromMemory(id);
+                }
             });
         });
     }
@@ -870,7 +845,7 @@
         btn.classList.add('saved-flash');
         setTimeout(() => btn.classList.remove('saved-flash'), 400);
         
-        showMemoryFeedback(`SAVED TO ${slot.toUpperCase()}`);
+        showScreenFeedback(`SAVED TO ${slot.toUpperCase()}`);
     }
 
     function loadFromMemory(slot) {
@@ -882,9 +857,9 @@
             document.getElementById('coop_first').value = config.coopFirst;
             document.getElementById('coop_rest').value = config.coopRest;
             calculate();
-            showMemoryFeedback(`LOADED ${slot.toUpperCase()}`);
+            showScreenFeedback(`LOADED ${slot.toUpperCase()}`);
         } else {
-            showMemoryFeedback(`${slot.toUpperCase()} EMPTY`);
+            showScreenFeedback(`${slot.toUpperCase()} EMPTY`);
         }
     }
 
@@ -894,14 +869,18 @@
         document.getElementById('coop_first').value = DEFAULTS.coopFirst;
         document.getElementById('coop_rest').value = DEFAULTS.coopRest;
         calculate();
-        showMemoryFeedback("RESET DEFAULTS");
+        showScreenFeedback("RESET DEFAULTS");
     }
 
-    function showMemoryFeedback(text) {
-        const el = document.getElementById('mem-feedback');
+    // Unified feedback function for both Memory and Copy
+    function showScreenFeedback(text) {
+        const el = document.getElementById('screen-status');
         el.innerText = text;
         el.classList.add('visible');
-        setTimeout(() => el.classList.remove('visible'), 1500);
+        
+        // Hide after 1.5 seconds
+        if (window.feedbackTimer) clearTimeout(window.feedbackTimer);
+        window.feedbackTimer = setTimeout(() => el.classList.remove('visible'), 1500);
     }
 
 
@@ -929,7 +908,7 @@
       }
       calculate();
     }
-    
+     
     // Strict input filter for Price
     function restrictInput(e) {
         if (e.target.id === 'price') {
@@ -947,14 +926,11 @@
       const val = rawText.replace(/[^\d.]/g, '');
       
       navigator.clipboard.writeText(val).then(() => {
-        showToast();
+        // Use the screen feedback instead of floating toast
+        showScreenFeedback("COPIED VALUE"); 
+      }).catch(err => {
+        showScreenFeedback("COPY FAILED");
       });
-    }
-
-    function showToast() {
-        const toast = document.getElementById('toast');
-        toast.classList.add('visible');
-        setTimeout(() => toast.classList.remove('visible'), 1500);
     }
 
     // --- Init ---
