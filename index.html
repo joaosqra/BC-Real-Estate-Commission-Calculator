@@ -82,10 +82,11 @@
       font-family: 'Inter', sans-serif;
       /* Skeumorphic Desk Background */
       background-color: #dcdcd9;
-      background-image: 
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 60%),
+      background-image:
+        radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.85) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.18) 0%, transparent 50%),
         url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"),
-        linear-gradient(#dcdcd9, #b0b0ad);
+        linear-gradient(#e0e0dc, #a8a8a4);
       display: flex;
       justify-content: center;
       align-items: flex-start; /* Changed to flex-start to prevent clipping on mobile */
@@ -98,59 +99,143 @@
 
     /* The Main Device Body */
     .calculator-body {
+      /* Noise texture sits on top of a subtle vertical gradient that suggests curved plastic */
       background-color: var(--braun-body);
-      /* Subtle noise texture for plastic feel */
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E");
+      background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #232323 0%, #191919 35%, #151515 70%, #121212 100%);
       width: 100%;
       max-width: 420px;
       margin: auto; /* Centers vertically when space allows */
       border-radius: 28px;
       padding: 36px 28px 44px;
-      /* Deep shadow for floating effect */
-      box-shadow: 
-        0 50px 80px -20px rgba(0,0,0,0.6),
-        0 10px 20px -5px rgba(0,0,0,0.4),
-        inset 0 1px 0 rgba(255,255,255,0.15),
-        inset 0 0 20px rgba(0,0,0,0.5); /* Inner darkening */
+      /* Layered shadow for floating effect + soft outer rim highlight */
+      box-shadow:
+        0 60px 90px -22px rgba(0,0,0,0.55),
+        0 18px 30px -10px rgba(0,0,0,0.45),
+        0 2px 0 rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.18),
+        inset 0 -1px 0 rgba(0,0,0,0.5),
+        inset 0 0 30px rgba(0,0,0,0.55);
       position: relative;
     }
-    
-    /* Side reflection for 3D realism */
+
+    /* Long vertical highlight running down the left edge — simulates curved plastic catching room light */
     .calculator-body::before {
       content: '';
       position: absolute;
-      top: 30px; bottom: 30px; left: 12px; width: 2px;
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.08), transparent);
-      filter: blur(2px);
+      top: 36px; bottom: 36px; left: 8px; width: 3px;
+      background: linear-gradient(to bottom,
+        transparent,
+        rgba(255,255,255,0.12) 25%,
+        rgba(255,255,255,0.06) 50%,
+        rgba(255,255,255,0.10) 75%,
+        transparent);
+      filter: blur(1.5px);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+
+    /* Subtle top-edge highlight — the bevel where the top face meets the side */
+    .calculator-body::after {
+      content: '';
+      position: absolute;
+      top: 1px; left: 12%; right: 12%; height: 1px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.25),
+        rgba(255,255,255,0.35),
+        rgba(255,255,255,0.25),
+        transparent);
+      pointer-events: none;
     }
 
     /* Branding */
     .brand {
       color: #fff;
       font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 0.5px;
+      font-size: 13px;
+      letter-spacing: 1.2px;
       margin-bottom: 24px;
-      opacity: 0.9;
+      opacity: 0.92;
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0 4px;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.6), 0 -1px 0 rgba(255,255,255,0.08);
     }
-    
-    .brand span { font-weight: 400; opacity: 0.6; font-size: 11px; margin-left: 6px; }
+
+    .brand-mark {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      font-size: 13px;
+    }
+
+    .brand-mark span {
+      font-weight: 400;
+      opacity: 0.55;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      margin-left: 8px;
+      padding-left: 8px;
+      border-left: 1px solid rgba(255,255,255,0.15);
+    }
+
+    /* Solar Cell — small recessed module with a visible cell grid */
+    .solar-cell {
+      width: 52px;
+      height: 14px;
+      background:
+        repeating-linear-gradient(90deg,
+          rgba(255,255,255,0.06) 0,
+          rgba(255,255,255,0.06) 1px,
+          transparent 1px,
+          transparent 10px),
+        linear-gradient(180deg, #1a1a1d, #0c0c0e);
+      border-radius: 2px;
+      box-shadow:
+        inset 0 2px 3px rgba(0,0,0,0.85),
+        inset 0 -1px 0 rgba(255,255,255,0.05),
+        0 1px 0 rgba(255,255,255,0.06);
+      position: relative;
+    }
+    .solar-cell::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.06) 55%, transparent 65%);
+      border-radius: 2px;
+      pointer-events: none;
+    }
 
     /* The Main Screen (Price Input) */
     .lcd-screen-container {
-      background: #0a0a0a;
-      padding: 8px;
-      border-radius: 10px;
+      background: linear-gradient(180deg, #050505, #0d0d0d);
+      padding: 10px;
+      border-radius: 8px;
       margin-bottom: 24px;
-      box-shadow: 
-        inset 0 2px 4px rgba(0,0,0,0.8),
-        0 1px 0 rgba(255,255,255,0.1),
-        0 -1px 0 rgba(0,0,0,0.5);
+      /* Deep recessed bezel — light comes from above */
+      box-shadow:
+        inset 0 3px 5px rgba(0,0,0,0.95),
+        inset 0 -1px 0 rgba(255,255,255,0.04),
+        0 1px 0 rgba(255,255,255,0.10),
+        0 -1px 0 rgba(0,0,0,0.6);
       transition: box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    /* Faint chamfered edge around the screen — Braun-style chrome rim */
+    .lcd-screen-container::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px; right: 6px; bottom: 6px;
+      border-radius: 5px;
+      box-shadow:
+        inset 0 0 0 1px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      pointer-events: none;
+      z-index: 4;
     }
 
     .lcd-screen {
@@ -163,8 +248,10 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      /* Inner shadow for depth */
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+      /* Inner shadow for depth + faint vignette */
+      box-shadow:
+        inset 0 0 24px rgba(0,0,0,0.55),
+        inset 0 1px 2px rgba(0,0,0,0.5);
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -252,39 +339,79 @@
     .memory-bank {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 20px;
-      padding: 0 4px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      padding: 10px 8px 8px;
+      /* Subtle recessed panel for the memory bank */
+      background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+      border-radius: 6px;
+      box-shadow:
+        inset 0 2px 3px rgba(0,0,0,0.55),
+        inset 0 -1px 0 rgba(255,255,255,0.04),
+        0 1px 0 rgba(255,255,255,0.05);
     }
 
+    .mem-cell { display: flex; flex-direction: column; align-items: center; }
+
     .mem-btn {
-      width: 42px;
-      height: 28px;
+      width: 46px;
+      height: 30px;
       border-radius: 4px;
       border: none;
-      background: #2a2a2a;
-      color: #888;
+      background: linear-gradient(180deg, #333, #222 55%, #1d1d1d);
+      color: #9a9a9a;
       font-size: 10px;
       font-weight: 700;
+      letter-spacing: 0.5px;
       cursor: pointer;
-      box-shadow: 
-        0 2px 4px rgba(0,0,0,0.4),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-      transition: all 0.1s;
+      box-shadow:
+        0 2px 0 #0a0a0a,
+        0 3px 5px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        inset 0 -1px 0 rgba(0,0,0,0.5);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease, color 0.15s ease;
       position: relative;
       overflow: hidden;
+      /* Mobile: kill long-press menus, tap highlights, and double-tap zoom */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .mem-btn::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0; height: 50%;
-      background: linear-gradient(rgba(255,255,255,0.05), transparent);
+      top: 0; left: 0; right: 0; height: 55%;
+      background: linear-gradient(rgba(255,255,255,0.08), transparent);
+      pointer-events: none;
+    }
+
+    /* Hold-progress indicator: fills bottom strip during the 600ms hold */
+    .mem-btn::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 0%;
+      height: 2px;
+      background: var(--braun-green);
+      box-shadow: 0 0 6px rgba(74, 122, 82, 0.7);
+      pointer-events: none;
+      transition: none;
+    }
+
+    .mem-btn.holding::after {
+      width: 100%;
+      transition: width 0.6s linear;
     }
 
     .mem-btn:active {
-      transform: translateY(1px);
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-      background: #222;
+      transform: translateY(2px);
+      box-shadow:
+        0 0 0 #0a0a0a,
+        inset 0 2px 4px rgba(0,0,0,0.55);
+      background: linear-gradient(180deg, #222, #1a1a1a);
     }
 
     .mem-btn.saved-flash {
@@ -292,30 +419,38 @@
     }
 
     @keyframes flashGreen {
-      0% { background-color: var(--braun-green); color: white; }
-      100% { background-color: #2a2a2a; color: #888; }
+      0%   { background: var(--braun-green); color: #fff; box-shadow: 0 0 0 0 rgba(74,122,82,0.6), inset 0 1px 0 rgba(255,255,255,0.2); }
+      100% { background: linear-gradient(180deg, #333, #1d1d1d); color: #9a9a9a; }
     }
 
     .mem-btn.reset {
-      background: var(--braun-yellow);
-      color: #222;
-      box-shadow: 
-        0 2px 4px rgba(0,0,0,0.3),
-        inset 0 1px 0 rgba(255,255,255,0.2);
+      background: linear-gradient(180deg, #e6c25a, #c9a23a 60%, #a8861e);
+      color: #1a1a1a;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+      box-shadow:
+        0 2px 0 #6a541a,
+        0 3px 5px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.4),
+        inset 0 -1px 0 rgba(0,0,0,0.2);
     }
-    
+
     .mem-btn.reset:active {
-      background: #bfa03e;
+      background: linear-gradient(180deg, #c9a23a, #a8861e);
       color: #111;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+      transform: translateY(2px);
+      box-shadow:
+        0 0 0 #6a541a,
+        inset 0 2px 4px rgba(0,0,0,0.25);
     }
 
     .mem-label {
-      font-size: 9px;
-      color: #555;
+      font-size: 8.5px;
+      color: #5a5a5a;
       text-align: center;
-      margin-top: 4px;
+      margin-top: 5px;
       text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 600;
     }
 
 
@@ -345,33 +480,42 @@
     .analog-input {
       width: 100%;
       background-color: var(--braun-button-dark);
+      background-image:
+        linear-gradient(180deg, #303030 0%, #262626 55%, #1f1f1f 100%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+      background-blend-mode: normal, overlay;
       border: none;
-      border-radius: 6px; 
+      border-radius: 6px;
       color: white;
       padding: 14px 16px;
       font-size: 16px;
       font-family: 'Inter', sans-serif;
       text-align: center;
-      transition: all 0.15s ease-out;
-      
-      /* Physical key look */
-      box-shadow: 
-        0 4px 0 #151515,
-        0 6px 6px rgba(0,0,0,0.3),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background-color 0.12s ease-out;
+
+      /* Physical key look — chiclet with darker side wall */
+      box-shadow:
+        0 4px 0 #0e0e0e,
+        0 6px 8px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        inset 0 -1px 0 rgba(0,0,0,0.4);
       transform: translateY(0);
-      
-      /* Subtle noise on keys too */
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+      caret-color: var(--braun-orange);
+    }
+
+    .analog-input:hover {
+      background-color: #2f2f2f;
     }
 
     .analog-input:focus {
       outline: none;
       background-color: #333;
-      transform: translateY(2px);
-      box-shadow: 
-        0 2px 0 #151515,
-        inset 0 0 0 1px var(--braun-orange);
+      transform: translateY(3px);
+      box-shadow:
+        0 1px 0 #0e0e0e,
+        0 2px 3px rgba(0,0,0,0.3),
+        inset 0 0 0 1px var(--braun-orange),
+        inset 0 2px 4px rgba(0,0,0,0.25);
     }
 
     /* Divider Line */
@@ -423,43 +567,62 @@
 
     /* The Tactile Buttons */
     .btn-round {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       border: none;
       color: white;
       font-size: 10px;
       font-weight: 700;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      
-      /* Convex Button Shape */
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent), var(--braun-button-brown);
-      box-shadow: 
-        0 4px 6px rgba(0,0,0,0.4),
-        inset 0 1px 0 rgba(255,255,255,0.12);
+      position: relative;
+
+      /* Convex Button — radial highlight + a faint bottom ambient occlusion ring */
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.22), rgba(255,255,255,0) 55%),
+        radial-gradient(circle at 70% 90%, rgba(0,0,0,0.35), transparent 60%),
+        var(--braun-button-brown);
+      box-shadow:
+        0 5px 8px rgba(0,0,0,0.45),
+        0 1px 0 rgba(255,255,255,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.18),
+        inset 0 -2px 4px rgba(0,0,0,0.4);
       transition: transform 0.1s, box-shadow 0.1s, text-shadow 0.3s ease;
+      /* Mobile niceties */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
     }
 
     .btn-round:active {
       transform: translateY(2px);
-      box-shadow: 
-        0 1px 2px rgba(0,0,0,0.4),
-        inset 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow:
+        0 2px 3px rgba(0,0,0,0.45),
+        inset 0 2px 5px rgba(0,0,0,0.35);
     }
 
     .btn-orange {
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent), var(--braun-orange);
-      box-shadow: 
-        0 4px 8px rgba(217, 78, 24, 0.3),
-        inset 0 1px 0 rgba(255,255,255,0.2);
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        radial-gradient(circle at 70% 90%, rgba(0,0,0,0.25), transparent 60%),
+        var(--braun-orange);
+      box-shadow:
+        0 5px 12px rgba(217, 78, 24, 0.4),
+        0 1px 0 rgba(255,255,255,0.10),
+        inset 0 1px 0 rgba(255,255,255,0.3),
+        inset 0 -2px 4px rgba(120, 35, 10, 0.5);
     }
-    
+
     .btn-dark {
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent), #222;
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.10), rgba(255,255,255,0) 55%),
+        radial-gradient(circle at 70% 90%, rgba(0,0,0,0.4), transparent 60%),
+        #222;
     }
 
     .footer {
@@ -625,8 +788,9 @@
         padding-right: 20px;
       }
 
-      /* Remove the 3D side bevel effect on mobile since it's flat screen now */
-      .calculator-body::before {
+      /* Remove the 3D side bevel + top-edge highlight on mobile since the device fills the viewport */
+      .calculator-body::before,
+      .calculator-body::after {
         display: none;
       }
       
@@ -643,8 +807,8 @@
   <div class="calculator-body">
     
     <div class="brand">
-      <div>BRAUN <span>ET66</span></div>
-      <div style="width: 40px; height: 12px; background: #222; border-radius: 2px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);"></div> <!-- Solar Sensor -->
+      <div class="brand-mark">BRAUN<span>ET66</span></div>
+      <div class="solar-cell" aria-hidden="true"></div>
     </div>
 
     <!-- MAIN DISPLAY -->
@@ -661,21 +825,21 @@
 
     <!-- MEMORY CONTROLS -->
     <div class="memory-bank">
-        <div>
-            <button class="mem-btn reset" onclick="resetDefaults()" title="Reset to BC Default">C</button>
+        <div class="mem-cell">
+            <button class="mem-btn reset" onclick="resetDefaults()" title="Reset to BC Default" type="button">C</button>
             <div class="mem-label">Reset</div>
         </div>
-        <div>
-            <button class="mem-btn" id="m1-btn">M1</button>
-            <div class="mem-label">Hold Save</div>
+        <div class="mem-cell">
+            <button class="mem-btn" id="m1-btn" type="button" aria-label="Memory 1 — tap to load, hold to save">M1</button>
+            <div class="mem-label">Tap · Hold</div>
         </div>
-        <div>
-            <button class="mem-btn" id="m2-btn">M2</button>
-            <div class="mem-label">Hold Save</div>
+        <div class="mem-cell">
+            <button class="mem-btn" id="m2-btn" type="button" aria-label="Memory 2 — tap to load, hold to save">M2</button>
+            <div class="mem-label">Tap · Hold</div>
         </div>
-        <div>
-            <button class="mem-btn" id="m3-btn">M3</button>
-            <div class="mem-label">Hold Save</div>
+        <div class="mem-cell">
+            <button class="mem-btn" id="m3-btn" type="button" aria-label="Memory 3 — tap to load, hold to save">M3</button>
+            <div class="mem-label">Tap · Hold</div>
         </div>
     </div>
 
@@ -826,33 +990,95 @@
     }
 
     // --- Memory Functions ---
+    // Tap = load, Hold (600ms) = save. Works reliably on both desktop and mobile.
+    const HOLD_MS = 600;
+    const MOVE_CANCEL_PX = 10; // cancel if finger drifts (likely scrolling)
+
     function setupMemoryButtons() {
         ['m1', 'm2', 'm3'].forEach(id => {
             const btn = document.getElementById(id + '-btn');
-            let pressTimer;
+            let pressTimer = null;
+            let pressStart = 0;
+            let didSave = false;
+            let startX = 0, startY = 0;
+            let activePointerType = null; // 'touch' | 'mouse'
 
-            // Mouse events
-            btn.addEventListener('mousedown', () => {
-                pressTimer = window.setTimeout(() => saveToMemory(id), 600);
-            });
-            btn.addEventListener('mouseup', () => {
-                clearTimeout(pressTimer);
-            });
-            btn.addEventListener('click', (e) => {
-                // If it was a short click (timer didn't fire)
-                if (e.detail === 1) loadFromMemory(id);
-            });
+            const beginPress = (x, y, pointerType) => {
+                // Ignore mouse press right after a touch (synthetic mouse events)
+                if (activePointerType === 'touch' && pointerType === 'mouse') return;
+                activePointerType = pointerType;
+                pressStart = Date.now();
+                didSave = false;
+                startX = x; startY = y;
+                btn.classList.add('holding');
+                pressTimer = setTimeout(() => {
+                    saveToMemory(id);
+                    didSave = true;
+                    if (navigator.vibrate) navigator.vibrate(35);
+                    pressTimer = null;
+                    btn.classList.remove('holding');
+                }, HOLD_MS);
+            };
 
-            // Touch events for mobile
+            const endPress = (pointerType) => {
+                if (pointerType && activePointerType && pointerType !== activePointerType) return;
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                    // Short tap → load
+                    if (!didSave && Date.now() - pressStart < HOLD_MS) {
+                        loadFromMemory(id);
+                    }
+                }
+                btn.classList.remove('holding');
+                // Release the input-source lock shortly after, so future events work.
+                setTimeout(() => { activePointerType = null; }, 350);
+            };
+
+            const cancelPress = () => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+                btn.classList.remove('holding');
+                activePointerType = null;
+            };
+
+            const checkDrift = (x, y) => {
+                if (Math.abs(x - startX) > MOVE_CANCEL_PX || Math.abs(y - startY) > MOVE_CANCEL_PX) {
+                    cancelPress();
+                }
+            };
+
+            // --- Touch (mobile) ---
             btn.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // prevent mouse emulation
-                pressTimer = window.setTimeout(() => saveToMemory(id), 600);
+                // preventDefault avoids the iOS callout/selection menu AND the synthetic mousedown
+                e.preventDefault();
+                const t = e.touches[0];
+                beginPress(t.clientX, t.clientY, 'touch');
+            }, { passive: false });
+
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                endPress('touch');
+            }, { passive: false });
+
+            btn.addEventListener('touchcancel', cancelPress);
+
+            btn.addEventListener('touchmove', (e) => {
+                const t = e.touches[0];
+                if (t) checkDrift(t.clientX, t.clientY);
+            }, { passive: true });
+
+            // --- Mouse (desktop) ---
+            btn.addEventListener('mousedown', (e) => {
+                beginPress(e.clientX, e.clientY, 'mouse');
             });
-            btn.addEventListener('touchend', () => {
-                clearTimeout(pressTimer);
-                // Simple touch load logic (if not saved)
-                // This is simplified; ideally we check duration
-            });
+            btn.addEventListener('mouseup', () => endPress('mouse'));
+            btn.addEventListener('mouseleave', cancelPress);
+
+            // Suppress the long-press context menu on every platform
+            btn.addEventListener('contextmenu', (e) => e.preventDefault());
         });
     }
 
