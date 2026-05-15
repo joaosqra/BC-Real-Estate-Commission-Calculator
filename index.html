@@ -716,13 +716,22 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 12px;
+      justify-items: center;
     }
 
     .hbrp-deadline-grid .date-input {
-      max-width: none;
+      /* Native date inputs center their value, so a full-width box leaves a lot
+         of empty space around a short string like "May 15, 2026". Cap the width
+         so it sits tightly around the value, and center it within the card. */
+      max-width: 220px;
       width: 100%;
       font-size: 14px;
-      padding: 10px 12px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .hbrp-deadline-grid .hbrp-deadline-output {
+      width: 100%;
     }
 
     .hbrp-deadline-output {
