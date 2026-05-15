@@ -9,8 +9,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="BC Commission">
-  <meta name="application-name" content="BC Commission">
+  <meta name="apple-mobile-web-app-title" content="Commission Calculator">
+  <meta name="application-name" content="Commission Calculator">
   <meta name="theme-color" content="#191919">
 
   <!-- App icons -->
@@ -59,7 +59,7 @@
     "author": {
       "@type": "Person",
       "name": "joaosqra",
-      "url": "https://www.linkedin.com/in/joaosqra/"
+      "url": "https://ca.linkedin.com/in/joaosqra"
     }
   }
   </script>
@@ -644,7 +644,25 @@
     }
 
     .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    .tab-panel.active {
+      display: block;
+      animation: tabFadeIn 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Active tab indicator slides */
+    .tab-btn { transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.08s ease; }
+    .tab-btn:active { transform: scale(0.97); }
+
+    /* Respect users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .tab-panel.active { animation: none; }
+      .tab-btn { transition: none; }
+    }
 
     /* --- HBRP Tab Panel (dedicated, more breathing room) --- */
     .hbrp-panel-card {
@@ -655,6 +673,8 @@
       box-shadow:
         inset 0 2px 4px rgba(0,0,0,0.6),
         inset 0 -1px 0 rgba(255,255,255,0.04);
+      overflow: hidden; /* clip anything wider than the card */
+      min-width: 0;
     }
 
     .hbrp-section-label {
@@ -670,14 +690,26 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
+      min-width: 0;
     }
 
     .hbrp-fee-value {
-      font-size: 28px;
+      /* clamp font-size so a $50k+ fee never blows out the card */
+      font-size: clamp(20px, 7.5vw, 28px);
       color: #d4b145;
       font-weight: 500;
       letter-spacing: -0.5px;
       font-family: 'Inter', sans-serif;
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hbrp-fee-row .btn-round {
+      flex-shrink: 0;
     }
 
     .hbrp-deadline-grid {
@@ -696,7 +728,7 @@
     .hbrp-deadline-output {
       color: #86c996;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 16px;
+      font-size: clamp(12px, 4.2vw, 16px); /* shrinks on narrow phones so the full date fits */
       letter-spacing: 0.3px;
       text-shadow: 0 0 4px rgba(134, 201, 150, 0.3);
       padding: 12px 14px;
@@ -704,6 +736,8 @@
       border-radius: 4px;
       box-shadow: inset 0 0 14px rgba(0,0,0,0.5);
       text-align: center;
+      min-width: 0;
+      overflow-wrap: break-word;
     }
 
     .hbrp-deadline-output.empty {
@@ -1162,9 +1196,11 @@
     }
 
     /* --- MOBILE APP MODE ---
-       Page-level scroll is locked (no bouncy page-refresh), but the calculator body
-       itself scrolls internally so the added Deal tape, HBRP fee, and Deadline rows
-       fit on every phone without truncation. */
+       Page-level scroll is locked. The calculator body scrolls internally for
+       overflow. Safe-area (notch) padding lives on BODY — not calculator-body —
+       because calculator-body is the scroll container, and putting safe-area
+       padding inside a scroll container lets content slide under the notch when
+       scrolled. With padding on body, the notch area is reserved permanently. */
     @media (max-width: 600px) {
       html, body {
         overflow: hidden;
@@ -1172,9 +1208,15 @@
       }
 
       body {
-        padding: 0;
+        /* Reserve the notch + home-indicator strips with safe-area-inset */
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: 0;
+        padding-right: 0;
         margin: 0;
-        background: var(--braun-body);
+        /* Match the calculator-body's top gradient stop so the notch strip
+           and the calculator face blend seamlessly. */
+        background: #232323;
         align-items: stretch;
         height: 100vh;          /* fallback */
         height: 100dvh;         /* tracks iOS URL bar */
@@ -1185,13 +1227,12 @@
       .calculator-body {
         width: 100%;
         max-width: 100%;
-        height: 100vh;
-        height: 100dvh;
+        height: 100%;          /* fills body's content area (already inset for safe-areas) */
         min-height: 0;
         border-radius: 0;
         box-shadow: none;
         margin: 0;
-        padding: max(14px, env(safe-area-inset-top)) 18px max(14px, env(safe-area-inset-bottom));
+        padding: 14px 18px 18px;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
@@ -1415,7 +1456,7 @@
     </div>
 
     <div class="footer">
-      Designed in BC 🇨🇦 by <a href="https://www.linkedin.com/in/joaosqra/" target="_blank">@joaosqra</a>
+      Designed in BC 🇨🇦 by <a href="https://ca.linkedin.com/in/joaosqra" target="_blank" rel="noopener">@joaosqra</a>
     </div>
 
   </div>

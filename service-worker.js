@@ -1,5 +1,5 @@
 // Bump CACHE_VERSION whenever app shell assets change so old caches are evicted.
-const CACHE_VERSION = 'bc-commission-v1';
+const CACHE_VERSION = 'bc-commission-v2';
 const APP_SHELL = [
   './',
   './index.html',
