@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="BC Real Estate Commission Calculator">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2a2a"/>
+      <stop offset="0.55" stop-color="#1a1a1a"/>
+      <stop offset="1" stop-color="#0e0e0e"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a4239"/>
+      <stop offset="1" stop-color="#252b25"/>
+    </linearGradient>
+    <radialGradient id="orange" cx="0.32" cy="0.28" r="0.85">
+      <stop offset="0" stop-color="#f5733f"/>
+      <stop offset="0.55" stop-color="#d94e18"/>
+      <stop offset="1" stop-color="#9a330a"/>
+    </radialGradient>
+    <filter id="lcdGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Body -->
+  <rect width="512" height="512" rx="112" fill="url(#body)"/>
+
+  <!-- Top edge highlight -->
+  <rect x="84" y="3" width="344" height="3" rx="1.5" fill="#ffffff" opacity="0.16"/>
+
+  <!-- LCD screen bezel -->
+  <rect x="76" y="116" width="360" height="168" rx="16" fill="#050505"/>
+  <!-- Inner LCD chamfer -->
+  <rect x="84" y="124" width="344" height="152" rx="8" fill="url(#screen)"/>
+  <!-- Scanlines -->
+  <g opacity="0.18">
+    <rect x="84" y="130" width="344" height="2" fill="#000"/>
+    <rect x="84" y="160" width="344" height="2" fill="#000"/>
+    <rect x="84" y="190" width="344" height="2" fill="#000"/>
+    <rect x="84" y="220" width="344" height="2" fill="#000"/>
+    <rect x="84" y="250" width="344" height="2" fill="#000"/>
+  </g>
+  <!-- Screen glare -->
+  <rect x="84" y="124" width="344" height="60" rx="8" fill="#ffffff" opacity="0.04"/>
+
+  <!-- Big % glyph on LCD -->
+  <text x="256" y="240" text-anchor="middle"
+        font-family="ui-monospace, 'SF Mono', 'Share Tech Mono', Menlo, monospace"
+        font-size="148" font-weight="700"
+        fill="#86c996"
+        filter="url(#lcdGlow)">%</text>
+
+  <!-- Orange Braun button (signature accent) -->
+  <circle cx="256" cy="380" r="60" fill="url(#orange)"/>
+  <!-- Convex highlight -->
+  <ellipse cx="240" cy="362" rx="22" ry="14" fill="#ffffff" opacity="0.32"/>
+  <!-- Faint base shadow under button -->
+  <ellipse cx="256" cy="446" rx="48" ry="6" fill="#000" opacity="0.45"/>
+</svg>
