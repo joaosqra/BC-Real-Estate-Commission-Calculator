@@ -780,9 +780,9 @@
         align-items: stretch;
         height: 100vh;          /* fallback */
         height: 100dvh;         /* tracks iOS URL bar */
-        position: fixed;        /* pin to viewport so the page itself can never scroll */
-        inset: 0;
-        width: 100%;
+        /* Note: avoid `position: fixed` here — it breaks iOS Safari's
+           ability to open the keyboard and scroll focused inputs into view.
+           `overflow: hidden` on html/body is enough to lock page scroll. */
       }
 
       .calculator-body {
@@ -857,7 +857,7 @@
             <div class="screen-label">Offer Price</div>
             <div class="error-indicator" id="screen-error">ERROR</div>
         </div>
-        <input type="text" id="price" placeholder="0" inputmode="numeric" />
+        <input type="text" id="price" placeholder="0" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
         <div id="mem-feedback" class="memory-toast">SAVED TO M1</div>
       </div>
     </div>
@@ -886,19 +886,19 @@
     <div class="controls-grid">
       <div class="input-group">
         <label>Gross (1st 100k)</label>
-        <input class="analog-input" type="text" id="total_first" value="7%" />
+        <input class="analog-input" type="text" id="total_first" value="7%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
       </div>
       <div class="input-group">
         <label>Gross (Bal)</label>
-        <input class="analog-input" type="text" id="total_rest" value="3%" />
+        <input class="analog-input" type="text" id="total_rest" value="3%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
       </div>
       <div class="input-group">
         <label>Co-op (1st 100k)</label>
-        <input class="analog-input" type="text" id="coop_first" value="3.255%" />
+        <input class="analog-input" type="text" id="coop_first" value="3.255%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
       </div>
       <div class="input-group">
         <label>Co-op (Bal)</label>
-        <input class="analog-input" type="text" id="coop_rest" value="1.1625%" />
+        <input class="analog-input" type="text" id="coop_rest" value="1.1625%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
       </div>
     </div>
 
@@ -969,7 +969,12 @@
     };
 
     // --- Haptics ---
-    // navigator.vibrate works on Android Chrome/Firefox; iOS Safari ignores it silently.
+    // navigator.vibrate is implemented on Android Chrome / Firefox / Samsung Internet.
+    // iOS Safari (and every browser on iOS, since they all use WebKit) does NOT expose
+    // any web vibration / haptic API as of 2026. There is no reliable workaround for
+    // arbitrary haptics on iOS — the call below silently no-ops there. iOS users get
+    // the visual press feedback (`.pressed`, the green hold-progress bar, screen flashes)
+    // instead, which is the strongest signal the platform allows.
     const HAPTIC_SUPPORTED = typeof navigator !== 'undefined' && 'vibrate' in navigator;
     const HAPTIC_PATTERNS = {
         tick:   8,            // tiny acknowledgement for a press
