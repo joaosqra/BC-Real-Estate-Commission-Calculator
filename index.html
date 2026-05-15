@@ -720,14 +720,24 @@
     }
 
     .hbrp-deadline-grid .date-input {
-      /* Native date inputs center their value, so a full-width box leaves a lot
-         of empty space around a short string like "May 15, 2026". Cap the width
-         so it sits tightly around the value, and center it within the card. */
-      max-width: 220px;
+      /* iOS Safari renders <input type="date"> as a button-like control with the
+         value centered, so a wide box leaves big empty bands around a short
+         string like "May 15, 2026". Strip the native chrome with appearance:none
+         so width/padding actually apply, then cap tightly around the value. */
+      -webkit-appearance: none;
+      appearance: none;
+      max-width: 160px;
       width: 100%;
-      font-size: 14px;
-      padding: 10px 14px;
+      font-size: 13px;
+      padding: 7px 10px;
       text-align: center;
+    }
+
+    /* iOS Safari needs the inner value pseudo-element styled directly — the
+       outer text-align doesn't cascade to it, leaving the date left-aligned. */
+    .hbrp-deadline-grid .date-input::-webkit-date-and-time-value {
+      text-align: center;
+      min-height: 1em;
     }
 
     .hbrp-deadline-grid .hbrp-deadline-output {
