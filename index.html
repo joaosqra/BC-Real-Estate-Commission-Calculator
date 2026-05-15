@@ -24,15 +24,15 @@
 
   <!-- SEO & METADATA -->
   <title>BC Real Estate Commission Calculator | Realtor Split Tool</title>
-  <meta name="description" content="Free BC real estate commission calculator. Instantly calculate listing and buyer agent splits, gross commission, and GST. Customizable rates for British Columbia realtors." />
-  <meta name="keywords" content="BC real estate calculator, realtor commission calculator, real estate commission splits BC, British Columbia realtor tools, commission GST calculator, agent fees" />
+  <meta name="description" content="Free BC real estate commission calculator. Instantly calculate listing and buyer agent splits and the HBRP rescission fee. Save deals per property. Customizable rates for British Columbia realtors." />
+  <meta name="keywords" content="BC real estate calculator, realtor commission calculator, real estate commission splits BC, British Columbia realtor tools, HBRP rescission calculator, home buyer rescission period, agent fees" />
   <meta name="author" content="joaosqra" />
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://joaosqra.github.io/BC-Real-Estate-Commission-Calculator/" />
   <meta property="og:title" content="BC Real Estate Commission Calculator" />
-  <meta property="og:description" content="A professional-grade calculator for BC realtors. Calculate splits, GST, and net commissions instantly." />
+  <meta property="og:description" content="A professional-grade calculator for BC realtors. Calculate splits, HBRP rescission fee, and save deals per property." />
   <meta property="og:image" content="https://i.postimg.cc/X7pdtJyJ/SCR-20250616-nnqs.png" />
 
   <!-- Twitter -->
@@ -55,7 +55,7 @@
       "price": "0",
       "priceCurrency": "CAD"
     },
-    "description": "A calculator tool specifically designed for British Columbia real estate agents to calculate commission splits and GST.",
+    "description": "A calculator tool specifically designed for British Columbia real estate agents to calculate commission splits, the HBRP rescission fee, and to save deals per property.",
     "author": {
       "@type": "Person",
       "name": "joaosqra",
@@ -560,57 +560,6 @@
       animation: flashGreen 0.4s ease-out;
     }
 
-    /* --- HBRP fee row gets the same look as other result rows, just a faint accent --- */
-    .result-row.hbrp-fee .result-label {
-      color: #888;
-    }
-    .result-row.hbrp-fee .result-value {
-      color: #d4b145; /* Braun yellow, matches reset button */
-    }
-
-    /* --- HBRP Deadline mini-row --- */
-    .hbrp-deadline {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
-      border-radius: 6px;
-      box-shadow:
-        inset 0 2px 3px rgba(0,0,0,0.55),
-        inset 0 -1px 0 rgba(255,255,255,0.04);
-    }
-
-    .hbrp-deadline .deadline-info {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .hbrp-deadline .deadline-label {
-      font-size: 10px;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      margin-bottom: 3px;
-    }
-
-    .hbrp-deadline .deadline-value {
-      color: #86c996;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 14px;
-      letter-spacing: 0.3px;
-      text-shadow: 0 0 4px rgba(134, 201, 150, 0.3);
-    }
-
-    .hbrp-deadline .deadline-value.empty {
-      color: #555;
-      text-shadow: none;
-    }
-
     .date-input {
       background: linear-gradient(180deg, #2f2f2f, #1d1d1d);
       border: none;
@@ -634,6 +583,270 @@
       box-shadow:
         0 1px 0 #0a0a0a,
         inset 0 0 0 1px var(--braun-orange);
+    }
+
+    /* --- Tab Bar (Commission / HBRP / Deals) --- */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      background: linear-gradient(180deg, #1a1a1a, #0e0e0e);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 18px;
+      box-shadow:
+        inset 0 2px 3px rgba(0,0,0,0.7),
+        0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #777;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 9px 4px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      position: relative;
+    }
+
+    .tab-btn:hover { color: #aaa; }
+
+    .tab-btn.active {
+      background: linear-gradient(180deg, #3a3a3a, #262626);
+      color: #fff;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        inset 0 -1px 0 rgba(0,0,0,0.3);
+    }
+
+    .tab-btn .badge {
+      display: inline-block;
+      background: var(--braun-orange);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 8px;
+      margin-left: 4px;
+      vertical-align: 1px;
+      letter-spacing: 0;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* --- HBRP Tab Panel (dedicated, more breathing room) --- */
+    .hbrp-panel-card {
+      background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.15));
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.6),
+        inset 0 -1px 0 rgba(255,255,255,0.04);
+    }
+
+    .hbrp-section-label {
+      font-size: 10px;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .hbrp-fee-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hbrp-fee-value {
+      font-size: 28px;
+      color: #d4b145;
+      font-weight: 500;
+      letter-spacing: -0.5px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hbrp-deadline-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .hbrp-deadline-grid .date-input {
+      max-width: none;
+      width: 100%;
+      font-size: 14px;
+      padding: 10px 12px;
+    }
+
+    .hbrp-deadline-output {
+      color: #86c996;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 16px;
+      letter-spacing: 0.3px;
+      text-shadow: 0 0 4px rgba(134, 201, 150, 0.3);
+      padding: 12px 14px;
+      background: var(--screen-bg);
+      border-radius: 4px;
+      box-shadow: inset 0 0 14px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    .hbrp-deadline-output.empty {
+      color: #555;
+      text-shadow: none;
+    }
+
+    .hbrp-explainer {
+      font-size: 11px;
+      color: #777;
+      line-height: 1.55;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.02);
+      border-left: 2px solid var(--braun-orange);
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* --- Deals Tab Panel --- */
+    .deals-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 2px;
+    }
+
+    .deals-count {
+      font-size: 10px;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .deals-clear-all {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #888;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .deals-clear-all:hover { color: var(--braun-orange); border-color: var(--braun-orange); }
+    .deals-clear-all:disabled { opacity: 0.3; cursor: default; }
+
+    .deals-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 55vh;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .deals-empty {
+      color: #555;
+      font-size: 12px;
+      text-align: center;
+      padding: 32px 16px;
+      font-style: italic;
+    }
+
+    .deal-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, #232323, #181818);
+      border-radius: 6px;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.04),
+        inset 0 -1px 0 rgba(0,0,0,0.4);
+      transition: background 0.15s;
+    }
+    .deal-item:hover { background: linear-gradient(180deg, #2a2a2a, #1e1e1e); }
+
+    .deal-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .deal-addr {
+      color: #e6e6e6;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .deal-meta {
+      color: #777;
+      font-size: 10px;
+      letter-spacing: 0.3px;
+      margin-top: 2px;
+    }
+
+    .deal-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .deal-btn {
+      border: none;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+    .deal-btn.load {
+      background: linear-gradient(180deg, #e6c25a, #c9a23a);
+      color: #1a1a1a;
+      box-shadow: 0 2px 0 #6a541a, inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+    .deal-btn.load:active, .deal-btn.load.pressed {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 #6a541a, inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .deal-btn.del {
+      background: linear-gradient(180deg, #3a3a3a, #222);
+      color: #999;
+      box-shadow: 0 2px 0 #0a0a0a, inset 0 1px 0 rgba(255,255,255,0.08);
+      width: 28px;
+      padding: 6px 0;
+    }
+    .deal-btn.del:active, .deal-btn.del.pressed {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 #0a0a0a, inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .deal-btn.del.confirming {
+      background: linear-gradient(180deg, #d94e18, #9a330a);
+      color: #fff;
     }
 
     /* The Configuration Grid (Commission Splits) */
@@ -991,10 +1204,12 @@
       }
 
       /* Compact spacing */
-      .brand { margin: 0 0 12px; }
-      .address-tape { margin-bottom: 12px; padding: 7px 8px; gap: 6px; }
+      .brand { margin: 0 0 10px; }
+      .address-tape { margin-bottom: 10px; padding: 7px 8px; gap: 6px; }
       .address-tape .tape-label { font-size: 8.5px; }
       .address-input { font-size: 13px; }
+      .tab-bar { margin-bottom: 14px; }
+      .tab-btn { font-size: 10.5px; padding: 8px 4px; }
       .lcd-screen-container { margin-bottom: 14px; }
       .lcd-screen { min-height: 80px; padding: 14px 18px; }
       input#price { font-size: 34px; }
@@ -1003,8 +1218,8 @@
       .analog-input { padding: 12px 14px; }
       .divider { margin: 0 -18px 14px; }
       .results-section { gap: 12px; }
-      .hbrp-deadline { padding: 8px 10px; }
-      .date-input { font-size: 11px; padding: 5px 7px; max-width: 130px; }
+      .hbrp-panel-card { padding: 14px 16px; margin-bottom: 12px; }
+      .hbrp-fee-value { font-size: 24px; }
       .footer { margin-top: 14px; }
     }
 
@@ -1041,7 +1256,7 @@
       <div class="solar-cell" aria-hidden="true"></div>
     </div>
 
-    <!-- PROPERTY ADDRESS TAPE — type or pick from saved deals; star to save, trash to delete -->
+    <!-- PROPERTY ADDRESS TAPE — always visible above the tabs so the "current deal" context is consistent across panels -->
     <div class="address-tape">
       <span class="tape-label">Deal</span>
       <input
@@ -1059,122 +1274,144 @@
       <button id="delete-deal-btn" class="tape-btn delete" type="button" title="Delete saved deal" aria-label="Delete saved deal" disabled>✕</button>
     </div>
 
-    <!-- MAIN DISPLAY -->
-    <div class="lcd-screen-container">
-      <div class="lcd-screen">
-        <div class="screen-header">
-            <div class="screen-label">Offer Price</div>
-            <div class="error-indicator" id="screen-error">ERROR</div>
+    <!-- TAB BAR -->
+    <div class="tab-bar" role="tablist">
+      <button class="tab-btn active" type="button" data-tab="commission" role="tab" aria-selected="true">Commission</button>
+      <button class="tab-btn" type="button" data-tab="hbrp" role="tab" aria-selected="false">HBRP</button>
+      <button class="tab-btn" type="button" data-tab="deals" role="tab" aria-selected="false">
+        Deals<span class="badge" id="deals-badge" hidden>0</span>
+      </button>
+    </div>
+
+    <!-- ===== COMMISSION TAB ===== -->
+    <div class="tab-panel active" id="tab-commission" role="tabpanel">
+
+      <!-- MAIN DISPLAY -->
+      <div class="lcd-screen-container">
+        <div class="lcd-screen">
+          <div class="screen-header">
+              <div class="screen-label">Offer Price</div>
+              <div class="error-indicator" id="screen-error">ERROR</div>
+          </div>
+          <input type="text" id="price" placeholder="0" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
+          <div id="mem-feedback" class="memory-toast">SAVED TO M1</div>
         </div>
-        <input type="text" id="price" placeholder="0" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
-        <div id="mem-feedback" class="memory-toast">SAVED TO M1</div>
+      </div>
+
+      <!-- MEMORY CONTROLS (rate presets) -->
+      <div class="memory-bank">
+          <div class="mem-cell">
+              <button class="mem-btn reset" onclick="resetDefaults()" title="Reset to BC Default" type="button">C</button>
+              <div class="mem-label">Reset</div>
+          </div>
+          <div class="mem-cell">
+              <button class="mem-btn" id="m1-btn" type="button" aria-label="Memory 1 — tap to load, hold to save">M1</button>
+              <div class="mem-label">Tap · Hold</div>
+          </div>
+          <div class="mem-cell">
+              <button class="mem-btn" id="m2-btn" type="button" aria-label="Memory 2 — tap to load, hold to save">M2</button>
+              <div class="mem-label">Tap · Hold</div>
+          </div>
+          <div class="mem-cell">
+              <button class="mem-btn" id="m3-btn" type="button" aria-label="Memory 3 — tap to load, hold to save">M3</button>
+              <div class="mem-label">Tap · Hold</div>
+          </div>
+      </div>
+
+      <!-- CONFIGURATION INPUTS -->
+      <div class="controls-grid">
+        <div class="input-group">
+          <label>Gross (1st 100k)</label>
+          <input class="analog-input" type="text" id="total_first" value="7%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
+        </div>
+        <div class="input-group">
+          <label>Gross (Bal)</label>
+          <input class="analog-input" type="text" id="total_rest" value="3%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
+        </div>
+        <div class="input-group">
+          <label>Co-op (1st 100k)</label>
+          <input class="analog-input" type="text" id="coop_first" value="3.255%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
+        </div>
+        <div class="input-group">
+          <label>Co-op (Bal)</label>
+          <input class="analog-input" type="text" id="coop_rest" value="1.1625%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- RESULTS (Readouts) -->
+      <div class="results-section">
+
+        <!-- Row 1: Gross -->
+        <div class="result-row">
+          <div class="result-info">
+            <span class="result-label">Total Commission</span>
+            <span class="result-value" id="gross">$0.00</span>
+          </div>
+          <button class="btn-round" onclick="copySingle('gross')">Copy</button>
+        </div>
+
+        <!-- Row 2: Listing Agent -->
+        <div class="result-row">
+          <div class="result-info">
+            <span class="result-label">Listing Agent</span>
+            <span class="result-value" id="listing">$0.00</span>
+          </div>
+          <button class="btn-round btn-orange" onclick="copySingle('listing')">Copy</button>
+        </div>
+
+        <!-- Row 3: Buyer's Agent -->
+        <div class="result-row">
+          <div class="result-info">
+            <span class="result-label">Buyer's Agent</span>
+            <span class="result-value" id="coop">$0.00</span>
+          </div>
+          <button class="btn-round btn-dark" onclick="copySingle('coop')">Copy</button>
+        </div>
+
+        <!-- Error Message Area -->
+        <div id="error-msg" class="error-banner">
+          ⚠️ Listing commission is negative. Check splits.
+        </div>
+
       </div>
     </div>
 
-    <!-- MEMORY CONTROLS -->
-    <div class="memory-bank">
-        <div class="mem-cell">
-            <button class="mem-btn reset" onclick="resetDefaults()" title="Reset to BC Default" type="button">C</button>
-            <div class="mem-label">Reset</div>
-        </div>
-        <div class="mem-cell">
-            <button class="mem-btn" id="m1-btn" type="button" aria-label="Memory 1 — tap to load, hold to save">M1</button>
-            <div class="mem-label">Tap · Hold</div>
-        </div>
-        <div class="mem-cell">
-            <button class="mem-btn" id="m2-btn" type="button" aria-label="Memory 2 — tap to load, hold to save">M2</button>
-            <div class="mem-label">Tap · Hold</div>
-        </div>
-        <div class="mem-cell">
-            <button class="mem-btn" id="m3-btn" type="button" aria-label="Memory 3 — tap to load, hold to save">M3</button>
-            <div class="mem-label">Tap · Hold</div>
-        </div>
-    </div>
+    <!-- ===== HBRP TAB ===== -->
+    <div class="tab-panel" id="tab-hbrp" role="tabpanel">
 
-    <!-- CONFIGURATION INPUTS -->
-    <div class="controls-grid">
-      <div class="input-group">
-        <label>Gross (1st 100k)</label>
-        <input class="analog-input" type="text" id="total_first" value="7%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
+      <!-- Rescission Fee -->
+      <div class="hbrp-panel-card">
+        <div class="hbrp-section-label">Rescission Fee (0.25% of price)</div>
+        <div class="hbrp-fee-row">
+          <span class="hbrp-fee-value" id="hbrp-fee">$0.00</span>
+          <button class="btn-round btn-dark" onclick="copySingle('hbrp-fee')">Copy</button>
+        </div>
       </div>
-      <div class="input-group">
-        <label>Gross (Bal)</label>
-        <input class="analog-input" type="text" id="total_rest" value="3%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
+
+      <!-- Rescission Deadline -->
+      <div class="hbrp-panel-card">
+        <div class="hbrp-section-label">Rescission Deadline</div>
+        <div class="hbrp-deadline-grid">
+          <input type="date" id="contract-date" class="date-input" aria-label="Contract acceptance date" />
+          <div class="hbrp-deadline-output empty" id="deadline-value">Pick contract date</div>
+        </div>
       </div>
-      <div class="input-group">
-        <label>Co-op (1st 100k)</label>
-        <input class="analog-input" type="text" id="coop_first" value="3.255%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
-      </div>
-      <div class="input-group">
-        <label>Co-op (Bal)</label>
-        <input class="analog-input" type="text" id="coop_rest" value="1.1625%" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" />
+
+      <!-- Explainer -->
+      <div class="hbrp-explainer">
+        BC's Home Buyer Rescission Period (HBRP) gives buyers of residential property <strong>3 business days</strong> after contract acceptance to back out. The rescission fee is <strong>0.25% of the purchase price</strong>. Weekends and BC statutory holidays don't count as business days.
       </div>
     </div>
 
-    <div class="divider"></div>
-
-    <!-- RESULTS (Readouts) -->
-    <div class="results-section">
-      
-      <!-- Row 1: Gross -->
-      <div class="result-row">
-        <div class="result-info">
-          <span class="result-label">Total Commission</span>
-          <span class="result-value" id="gross">$0.00</span>
-        </div>
-        <button class="btn-round" onclick="copySingle('gross')">Copy</button>
+    <!-- ===== DEALS TAB ===== -->
+    <div class="tab-panel" id="tab-deals" role="tabpanel">
+      <div class="deals-header">
+        <span class="deals-count" id="deals-count">0 saved</span>
+        <button class="deals-clear-all" id="deals-clear-all" type="button" disabled>Clear All</button>
       </div>
-
-      <!-- Row 2: Listing Agent (Swapped Up) -->
-      <div class="result-row">
-        <div class="result-info">
-          <span class="result-label">Listing Agent</span>
-          <span class="result-value" id="listing">$0.00</span>
-        </div>
-        <!-- Orange Button for Primary Action -->
-        <button class="btn-round btn-orange" onclick="copySingle('listing')">Copy</button>
-      </div>
-
-      <!-- Row 3: Buyer's Agent (Swapped Down) -->
-      <div class="result-row">
-        <div class="result-info">
-          <span class="result-label">Buyer's Agent</span>
-          <span class="result-value" id="coop">$0.00</span>
-        </div>
-        <button class="btn-round btn-dark" onclick="copySingle('coop')">Copy</button>
-      </div>
-
-       <!-- Row 4: GST -->
-       <div class="result-row">
-        <div class="result-info">
-          <span class="result-label">GST (5%)</span>
-          <span class="result-value" id="gst" style="opacity: 0.6; font-size: 16px;">$0.00</span>
-        </div>
-      </div>
-
-      <!-- Row 5: HBRP Rescission Fee (BC Home Buyer Rescission Period, 0.25% of price) -->
-      <div class="result-row hbrp-fee">
-        <div class="result-info">
-          <span class="result-label">HBRP Fee (0.25%)</span>
-          <span class="result-value" id="hbrp-fee">$0.00</span>
-        </div>
-        <button class="btn-round btn-dark" onclick="copySingle('hbrp-fee')">Copy</button>
-      </div>
-
-      <!-- HBRP Rescission Deadline calculator -->
-      <div class="hbrp-deadline">
-        <div class="deadline-info">
-          <span class="deadline-label">Rescission Deadline</span>
-          <span class="deadline-value empty" id="deadline-value">Pick contract date</span>
-        </div>
-        <input type="date" id="contract-date" class="date-input" aria-label="Contract acceptance date" />
-      </div>
-
-      <!-- Error Message Area -->
-      <div id="error-msg" class="error-banner">
-        ⚠️ Listing commission is negative. Check splits.
-      </div>
-
+      <div class="deals-list" id="deals-list-container"></div>
     </div>
 
     <div class="footer">
@@ -1252,14 +1489,12 @@
       const gross = (first100k * totalFirst) + (remaining * totalRest);
       const coop = (first100k * coopFirst) + (remaining * coopRest);
       const listing = gross - coop;
-      const gst = gross * 0.05;
       const hbrpFee = price * 0.0025; // BC Home Buyer Rescission Period fee — 0.25% of price
 
       // Render
       document.getElementById('gross').innerText = formatCurrency(gross);
       document.getElementById('coop').innerText = formatCurrency(coop);
       document.getElementById('listing').innerText = formatCurrency(listing);
-      document.getElementById('gst').innerText = formatCurrency(gst);
       document.getElementById('hbrp-fee').innerText = formatCurrency(hbrpFee);
 
       // Error indication
@@ -1358,6 +1593,7 @@
       saveDealsList(list.slice(0, DEALS_LIMIT));
       refreshDealsDatalist();
       updateDeleteButtonState();
+      updateDealsBadge();
 
       const btn = document.getElementById('save-deal-btn');
       btn.classList.add('saved-flash');
@@ -1373,6 +1609,7 @@
       saveDealsList(list);
       refreshDealsDatalist();
       updateDeleteButtonState();
+      updateDealsBadge();
       haptic('medium');
       showMemoryFeedback('DELETED');
     }
@@ -1380,6 +1617,144 @@
     function updateDeleteButtonState() {
       const addr = document.getElementById('address').value;
       document.getElementById('delete-deal-btn').disabled = !findDeal(addr);
+    }
+
+    function updateDealsBadge() {
+      const n = getDeals().length;
+      const badge = document.getElementById('deals-badge');
+      const count = document.getElementById('deals-count');
+      const clearBtn = document.getElementById('deals-clear-all');
+      if (badge) {
+        badge.textContent = n;
+        badge.hidden = n === 0;
+      }
+      if (count) count.textContent = n === 1 ? '1 saved' : `${n} saved`;
+      if (clearBtn) clearBtn.disabled = n === 0;
+    }
+
+    // Escape user-controlled text before inserting into innerHTML
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[ch]));
+    }
+
+    function formatRelativeDate(ts) {
+      if (!ts) return '';
+      const diff = Date.now() - ts;
+      const days = Math.floor(diff / 86400000);
+      if (days < 1) return 'today';
+      if (days < 2) return 'yesterday';
+      if (days < 7) return `${days} days ago`;
+      return new Intl.DateTimeFormat('en-CA', { month: 'short', day: 'numeric' }).format(new Date(ts));
+    }
+
+    function renderDealsList() {
+      const container = document.getElementById('deals-list-container');
+      if (!container) return;
+      const deals = getDeals();
+      updateDealsBadge();
+
+      if (deals.length === 0) {
+        container.innerHTML = '<div class="deals-empty">No saved deals yet.<br>Type an address in the tape above and tap ★ to save.</div>';
+        return;
+      }
+
+      container.innerHTML = deals.map(d => {
+        const priceNum = parseNumber(d.price);
+        const priceLabel = priceNum > 0 ? formatCurrency(priceNum) : 'No price';
+        return `
+          <div class="deal-item" data-address="${escapeHtml(d.address)}">
+            <div class="deal-info">
+              <div class="deal-addr">${escapeHtml(d.address)}</div>
+              <div class="deal-meta">${escapeHtml(priceLabel)} · ${escapeHtml(formatRelativeDate(d.savedAt))}</div>
+            </div>
+            <div class="deal-actions">
+              <button class="deal-btn load" type="button" data-action="load">Load</button>
+              <button class="deal-btn del" type="button" data-action="delete" aria-label="Delete deal">✕</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Bind action handlers. Delete uses a two-tap confirm so a misfire
+      // doesn't silently destroy a saved deal.
+      container.querySelectorAll('.deal-item').forEach(item => {
+        const address = item.dataset.address;
+        item.querySelector('[data-action="load"]').addEventListener('click', () => {
+          const deal = findDeal(address);
+          if (!deal) return;
+          document.getElementById('address').value = deal.address;
+          applyDealToInputs(deal);
+          haptic('double');
+          showMemoryFeedback('LOADED');
+          switchTab('commission');
+        });
+        const delBtn = item.querySelector('[data-action="delete"]');
+        delBtn.addEventListener('click', () => {
+          if (delBtn.classList.contains('confirming')) {
+            removeDeal(address);
+            renderDealsList();
+          } else {
+            delBtn.classList.add('confirming');
+            delBtn.textContent = '?';
+            haptic('light');
+            setTimeout(() => {
+              delBtn.classList.remove('confirming');
+              delBtn.textContent = '✕';
+            }, 2000);
+          }
+        });
+      });
+    }
+
+    // --- Tabs ---
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        const isActive = b.dataset.tab === name;
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', String(isActive));
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'tab-' + name);
+      });
+      if (name === 'deals') renderDealsList();
+      haptic('tick');
+    }
+
+    function setupTabs() {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.addEventListener('click', () => switchTab(b.dataset.tab));
+      });
+      const clearAll = document.getElementById('deals-clear-all');
+      if (clearAll) {
+        let armed = false;
+        clearAll.addEventListener('click', () => {
+          if (!armed) {
+            armed = true;
+            clearAll.textContent = 'Tap again';
+            clearAll.style.color = 'var(--braun-orange)';
+            clearAll.style.borderColor = 'var(--braun-orange)';
+            setTimeout(() => {
+              armed = false;
+              clearAll.textContent = 'Clear All';
+              clearAll.style.color = '';
+              clearAll.style.borderColor = '';
+            }, 2500);
+            haptic('light');
+            return;
+          }
+          saveDealsList([]);
+          refreshDealsDatalist();
+          renderDealsList();
+          updateDeleteButtonState();
+          haptic('medium');
+          showMemoryFeedback('CLEARED ALL');
+          armed = false;
+          clearAll.textContent = 'Clear All';
+          clearAll.style.color = '';
+          clearAll.style.borderColor = '';
+        });
+      }
     }
 
     function onAddressInput() {
@@ -1663,6 +2038,10 @@
 
 
     // --- Input Formatting ---
+    // These run only on the price + four percent inputs.
+    // The address and contract-date inputs are NOT wired into these handlers —
+    // a previous version mangled an address like "1234 Main St" into "1234%"
+    // because parseFloat picked up the leading "1234" on blur.
     function handleFocus(e) {
       let val = e.target.value;
       if (e.target.id === 'price') {
@@ -1739,12 +2118,17 @@
 
     // --- Init ---
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('input');
-      inputs.forEach(i => {
-        if(i.id === 'price') {
-             i.addEventListener('input', restrictInput);
+      // Wire up only the numeric inputs to the price/percent formatting handlers.
+      // Address and contract-date have their own handlers and MUST be excluded —
+      // otherwise handleBlur's parseFloat would mangle "1234 Main St" → "1234%".
+      const NUMERIC_INPUT_IDS = ['price', 'total_first', 'total_rest', 'coop_first', 'coop_rest'];
+      NUMERIC_INPUT_IDS.forEach(id => {
+        const i = document.getElementById(id);
+        if (!i) return;
+        if (id === 'price') {
+          i.addEventListener('input', restrictInput);
         } else {
-             i.addEventListener('input', calculate);
+          i.addEventListener('input', calculate);
         }
         i.addEventListener('focus', handleFocus);
         i.addEventListener('blur', handleBlur);
@@ -1752,9 +2136,11 @@
       
       setupMemoryButtons();
       setupTactilePress();
+      setupTabs();
 
       // --- Deals: address tape + save/delete buttons ---
       refreshDealsDatalist();
+      updateDealsBadge();
       const addressEl = document.getElementById('address');
       // `change` fires reliably across browsers when a datalist option is picked;
       // `input` covers free typing — we update only the delete-button state there
