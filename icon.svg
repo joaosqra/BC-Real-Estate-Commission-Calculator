@@ -1,23 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="BC Real Estate Commission Calculator">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Commission Calculator">
   <defs>
-    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2c2c2c"/>
-      <stop offset="0.55" stop-color="#1a1a1a"/>
-      <stop offset="1" stop-color="#0d0d0d"/>
+    <!-- Outer canvas: very dark gradient that doubles as the safe-area background -->
+    <linearGradient id="canvas" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f1f1f"/>
+      <stop offset="1" stop-color="#0a0a0a"/>
+    </linearGradient>
+    <!-- Inner calculator body: subtler gradient, slightly lighter than canvas -->
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#333"/>
+      <stop offset="0.55" stop-color="#222"/>
+      <stop offset="1" stop-color="#161616"/>
     </linearGradient>
     <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#3b4339"/>
       <stop offset="1" stop-color="#252b25"/>
     </linearGradient>
-    <radialGradient id="orangeBtn" cx="0.35" cy="0.3" r="0.85">
+    <radialGradient id="orangeBtn" cx="0.34" cy="0.28" r="0.85">
       <stop offset="0" stop-color="#f5733f"/>
       <stop offset="0.55" stop-color="#d94e18"/>
       <stop offset="1" stop-color="#922f08"/>
     </radialGradient>
     <radialGradient id="darkBtn" cx="0.35" cy="0.28" r="0.85">
-      <stop offset="0" stop-color="#4a4a4a"/>
-      <stop offset="0.55" stop-color="#2c2c2c"/>
-      <stop offset="1" stop-color="#161616"/>
+      <stop offset="0" stop-color="#525252"/>
+      <stop offset="0.55" stop-color="#333"/>
+      <stop offset="1" stop-color="#1a1a1a"/>
     </radialGradient>
     <filter id="lcdGlow" x="-10%" y="-10%" width="120%" height="120%">
       <feGaussianBlur stdDeviation="1.5" result="blur"/>
@@ -25,57 +31,64 @@
     </filter>
   </defs>
 
-  <!-- Body -->
-  <rect width="512" height="512" rx="100" fill="url(#body)"/>
+  <!-- Outer canvas: fills the icon. Doubles as the safe-area padding around the calculator. -->
+  <rect width="512" height="512" rx="112" fill="url(#canvas)"/>
 
-  <!-- Top edge highlight -->
-  <rect x="84" y="3" width="344" height="3" rx="1.5" fill="#ffffff" opacity="0.16"/>
-
-  <!-- LCD screen bezel + screen -->
-  <rect x="60" y="64" width="392" height="116" rx="14" fill="#050505"/>
-  <rect x="70" y="74" width="372" height="96" rx="6" fill="url(#screen)"/>
-  <!-- Subtle scanlines on LCD -->
-  <g opacity="0.18">
-    <rect x="70" y="84" width="372" height="2" fill="#000"/>
-    <rect x="70" y="110" width="372" height="2" fill="#000"/>
-    <rect x="70" y="136" width="372" height="2" fill="#000"/>
-  </g>
-  <!-- LCD readout — mock commission figure -->
-  <text x="428" y="148" text-anchor="end"
-        font-family="ui-monospace, 'Share Tech Mono', 'SF Mono', Menlo, monospace"
-        font-size="62" font-weight="700"
-        letter-spacing="3"
-        fill="#86c996"
-        filter="url(#lcdGlow)">1.500</text>
-
-  <!-- 3x3 button grid (rows at y = 248, 348, 448; cols at x = 128, 256, 384) -->
+  <!-- Inner calculator body: inset by 56px on each side (~11% padding), so iOS rounding,
+       Android maskable crops, and home-screen presentation all leave a clear margin
+       between the calculator and the icon edge. -->
   <g>
-    <!-- Row 1 -->
-    <circle cx="128" cy="248" r="40" fill="url(#darkBtn)"/>
-    <circle cx="256" cy="248" r="40" fill="url(#darkBtn)"/>
-    <circle cx="384" cy="248" r="40" fill="url(#darkBtn)"/>
-    <!-- Row 2 -->
-    <circle cx="128" cy="348" r="40" fill="url(#darkBtn)"/>
-    <circle cx="256" cy="348" r="40" fill="url(#darkBtn)"/>
-    <circle cx="384" cy="348" r="40" fill="url(#darkBtn)"/>
-    <!-- Row 3 -->
-    <circle cx="128" cy="448" r="40" fill="url(#darkBtn)"/>
-    <circle cx="256" cy="448" r="40" fill="url(#darkBtn)"/>
-    <!-- Braun signature: bottom-right orange button -->
-    <circle cx="384" cy="448" r="40" fill="url(#orangeBtn)"/>
-  </g>
+    <rect x="56" y="56" width="400" height="400" rx="56" fill="url(#bodyGrad)"/>
 
-  <!-- Button gloss highlights -->
-  <g fill="#ffffff" opacity="0.32">
-    <ellipse cx="115" cy="234" rx="14" ry="8"/>
-    <ellipse cx="243" cy="234" rx="14" ry="8"/>
-    <ellipse cx="371" cy="234" rx="14" ry="8"/>
-    <ellipse cx="115" cy="334" rx="14" ry="8"/>
-    <ellipse cx="243" cy="334" rx="14" ry="8"/>
-    <ellipse cx="371" cy="334" rx="14" ry="8"/>
-    <ellipse cx="115" cy="434" rx="14" ry="8"/>
-    <ellipse cx="243" cy="434" rx="14" ry="8"/>
+    <!-- Subtle inner-body top highlight -->
+    <rect x="100" y="58" width="312" height="2" rx="1" fill="#ffffff" opacity="0.18"/>
+
+    <!-- LCD screen bezel + screen -->
+    <rect x="80" y="92" width="352" height="100" rx="10" fill="#050505"/>
+    <rect x="88" y="100" width="336" height="84" rx="5" fill="url(#screen)"/>
+    <!-- Subtle scanlines -->
+    <g opacity="0.18">
+      <rect x="88" y="108" width="336" height="2" fill="#000"/>
+      <rect x="88" y="130" width="336" height="2" fill="#000"/>
+      <rect x="88" y="152" width="336" height="2" fill="#000"/>
+    </g>
+    <!-- LCD readout — a small mock commission figure -->
+    <text x="408" y="166" text-anchor="end"
+          font-family="ui-monospace, 'Share Tech Mono', 'SF Mono', Menlo, monospace"
+          font-size="54" font-weight="700"
+          letter-spacing="2"
+          fill="#86c996"
+          filter="url(#lcdGlow)">1.500</text>
+
+    <!-- 3x3 button grid (centered inside the inner body) -->
+    <!-- Inner body span 56..456, center 256. Buttons cols at 134, 256, 378; rows at 248, 336, 424 -->
+    <g>
+      <!-- Row 1 -->
+      <circle cx="134" cy="248" r="34" fill="url(#darkBtn)"/>
+      <circle cx="256" cy="248" r="34" fill="url(#darkBtn)"/>
+      <circle cx="378" cy="248" r="34" fill="url(#darkBtn)"/>
+      <!-- Row 2 -->
+      <circle cx="134" cy="336" r="34" fill="url(#darkBtn)"/>
+      <circle cx="256" cy="336" r="34" fill="url(#darkBtn)"/>
+      <circle cx="378" cy="336" r="34" fill="url(#darkBtn)"/>
+      <!-- Row 3 -->
+      <circle cx="134" cy="424" r="34" fill="url(#darkBtn)"/>
+      <circle cx="256" cy="424" r="34" fill="url(#darkBtn)"/>
+      <!-- Braun signature: bottom-right orange button -->
+      <circle cx="378" cy="424" r="34" fill="url(#orangeBtn)"/>
+    </g>
+
+    <!-- Button gloss highlights -->
+    <g fill="#ffffff" opacity="0.30">
+      <ellipse cx="123" cy="236" rx="12" ry="7"/>
+      <ellipse cx="245" cy="236" rx="12" ry="7"/>
+      <ellipse cx="367" cy="236" rx="12" ry="7"/>
+      <ellipse cx="123" cy="324" rx="12" ry="7"/>
+      <ellipse cx="245" cy="324" rx="12" ry="7"/>
+      <ellipse cx="367" cy="324" rx="12" ry="7"/>
+      <ellipse cx="123" cy="412" rx="12" ry="7"/>
+      <ellipse cx="245" cy="412" rx="12" ry="7"/>
+    </g>
+    <ellipse cx="367" cy="410" rx="14" ry="9" fill="#ffffff" opacity="0.42"/>
   </g>
-  <!-- Brighter highlight on the orange button -->
-  <ellipse cx="371" cy="432" rx="16" ry="10" fill="#ffffff" opacity="0.45"/>
 </svg>
