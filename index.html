@@ -5,10 +5,22 @@
   <!-- Optimized Viewport for Web App Mode (No Zoom, Covers Notch) -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   
-  <!-- iOS Web App Meta -->
+  <!-- PWA / iOS Web App Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BC Commission">
+  <meta name="application-name" content="BC Commission">
   <meta name="theme-color" content="#191919">
+
+  <!-- App icons -->
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
 
   <!-- SEO & METADATA -->
   <title>BC Real Estate Commission Calculator | Realtor Split Tool</title>
@@ -1291,6 +1303,15 @@
       setupTactilePress();
       calculate();
     });
+
+    // --- PWA: register service worker for offline + installability ---
+    // Wrapped in load + try/catch so a failed registration never breaks the page
+    // (e.g. when opened via file:// or in a private browsing context).
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js').catch(() => {});
+      });
+    }
   </script>
 </body>
 </html>
