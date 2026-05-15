@@ -539,18 +539,23 @@
       transform: translateY(2px);
       box-shadow: 0 0 0 #6a541a, inset 0 2px 4px rgba(0,0,0,0.3);
     }
+    .tape-btn.save:disabled {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+    }
 
-    .tape-btn.delete {
+    .tape-btn.clear {
       background: linear-gradient(180deg, #3a3a3a, #222);
       color: #888;
       box-shadow: 0 2px 0 #0a0a0a, inset 0 1px 0 rgba(255,255,255,0.08);
     }
-    .tape-btn.delete:active,
-    .tape-btn.delete.pressed {
+    .tape-btn.clear:active,
+    .tape-btn.clear.pressed {
       transform: translateY(2px);
       box-shadow: 0 0 0 #0a0a0a, inset 0 2px 4px rgba(0,0,0,0.5);
     }
-    .tape-btn.delete:disabled {
+    .tape-btn.clear:disabled {
       opacity: 0.35;
       cursor: default;
       pointer-events: none;
@@ -1331,8 +1336,8 @@
         spellcheck="false"
         enterkeyhint="done" />
       <datalist id="deals-list"></datalist>
-      <button id="save-deal-btn" class="tape-btn save" type="button" title="Save this deal" aria-label="Save deal">★</button>
-      <button id="delete-deal-btn" class="tape-btn delete" type="button" title="Delete saved deal" aria-label="Delete saved deal" disabled>✕</button>
+      <button id="save-deal-btn" class="tape-btn save" type="button" title="Save this deal" aria-label="Save deal" disabled>★</button>
+      <button id="clear-deal-btn" class="tape-btn clear" type="button" title="Clear current deal" aria-label="Clear current deal" disabled>✕</button>
     </div>
 
     <!-- TAB BAR -->
@@ -1636,7 +1641,7 @@
       if (deal.contractDate) document.getElementById('contract-date').value = deal.contractDate;
       calculate();
       updateRescissionDeadline();
-      updateDeleteButtonState();
+      updateClearButtonState();
     }
 
     function persistDeal(address) {
@@ -1653,7 +1658,7 @@
       else list.unshift(deal);
       saveDealsList(list.slice(0, DEALS_LIMIT));
       refreshDealsDatalist();
-      updateDeleteButtonState();
+      updateClearButtonState();
       updateDealsBadge();
 
       const btn = document.getElementById('save-deal-btn');
@@ -1669,15 +1674,36 @@
       const list = getDeals().filter(d => d.address.toLowerCase() !== a);
       saveDealsList(list);
       refreshDealsDatalist();
-      updateDeleteButtonState();
+      updateClearButtonState();
       updateDealsBadge();
       haptic('medium');
       showMemoryFeedback('DELETED');
     }
 
-    function updateDeleteButtonState() {
-      const addr = document.getElementById('address').value;
-      document.getElementById('delete-deal-btn').disabled = !findDeal(addr);
+    function updateClearButtonState() {
+      // Drives the enabled state of both tape buttons:
+      //   ✕ enables when any deal-context field has content (address or price),
+      //     since clearing wipes the whole context.
+      //   ★ enables only when there's a non-empty address — saving without one
+      //     is a no-op and the old "ENTER ADDRESS" toast was easy to miss.
+      const addr = document.getElementById('address').value.trim();
+      const price = document.getElementById('price').value.trim();
+      document.getElementById('clear-deal-btn').disabled = !addr && !price;
+      document.getElementById('save-deal-btn').disabled = !addr;
+    }
+
+    // Resets the in-form deal context. Does NOT touch saved deals — those are
+    // only removed from the Deals tab. Commission rates are user presets and
+    // are intentionally preserved across clears.
+    function clearCurrentDeal() {
+      document.getElementById('address').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('contract-date').value = toISODate(new Date());
+      calculate();
+      updateRescissionDeadline();
+      updateClearButtonState();
+      haptic('medium');
+      showMemoryFeedback('CLEARED');
     }
 
     function updateDealsBadge() {
@@ -1807,7 +1833,7 @@
           saveDealsList([]);
           refreshDealsDatalist();
           renderDealsList();
-          updateDeleteButtonState();
+          updateClearButtonState();
           haptic('medium');
           showMemoryFeedback('CLEARED ALL');
           armed = false;
@@ -1826,7 +1852,7 @@
         haptic('double');
         showMemoryFeedback('LOADED');
       } else {
-        updateDeleteButtonState();
+        updateClearButtonState();
       }
     }
 
@@ -2204,14 +2230,17 @@
       updateDealsBadge();
       const addressEl = document.getElementById('address');
       // `change` fires reliably across browsers when a datalist option is picked;
-      // `input` covers free typing — we update only the delete-button state there
+      // `input` covers free typing — we update only the clear-button state there
       // so we don't auto-load mid-typing.
       addressEl.addEventListener('change', onAddressInput);
-      addressEl.addEventListener('input', updateDeleteButtonState);
+      addressEl.addEventListener('input', updateClearButtonState);
+      // Price also feeds the clear-button enabled state, since the ✕ wipes the
+      // whole current-deal context — not just the address.
+      document.getElementById('price').addEventListener('input', updateClearButtonState);
       document.getElementById('save-deal-btn')
         .addEventListener('click', () => persistDeal(addressEl.value));
-      document.getElementById('delete-deal-btn')
-        .addEventListener('click', () => removeDeal(addressEl.value));
+      document.getElementById('clear-deal-btn')
+        .addEventListener('click', clearCurrentDeal);
 
       // --- HBRP deadline: default to today, recompute on change ---
       const contractEl = document.getElementById('contract-date');
@@ -2220,7 +2249,7 @@
 
       calculate();
       updateRescissionDeadline();
-      updateDeleteButtonState();
+      updateClearButtonState();
     });
 
     // --- PWA: register service worker for offline + installability ---
