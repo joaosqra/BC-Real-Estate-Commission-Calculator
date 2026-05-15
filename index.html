@@ -720,14 +720,15 @@
     }
 
     .hbrp-deadline-grid .date-input {
-      /* iOS Safari renders <input type="date"> as a button-like control with the
-         value centered, so a wide box leaves big empty bands around a short
-         string like "May 15, 2026". Strip the native chrome with appearance:none
-         so width/padding actually apply, then cap tightly around the value. */
+      /* iOS Safari's native <input type="date"> has an intrinsic min-width that
+         ignores max-width when paired with width:100%. Use an explicit pixel
+         width + min-width:0 + box-sizing:border-box so the control actually
+         hugs the value ("May 15, 2026") instead of stretching across the card. */
       -webkit-appearance: none;
       appearance: none;
-      max-width: 160px;
-      width: 100%;
+      box-sizing: border-box;
+      width: 150px;
+      min-width: 0;
       font-size: 13px;
       padding: 7px 10px;
       text-align: center;
