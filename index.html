@@ -465,6 +465,176 @@
       font-weight: 600;
     }
 
+    /* --- Property Address Tape (above LCD) --- */
+    .address-tape {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      margin-bottom: 14px;
+      background: linear-gradient(180deg, #222, #161616);
+      border-radius: 6px;
+      box-shadow:
+        inset 0 2px 3px rgba(0,0,0,0.6),
+        inset 0 -1px 0 rgba(255,255,255,0.04),
+        0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .address-tape .tape-label {
+      font-size: 9px;
+      color: #6a6a6a;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .address-input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #e6e6e6;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      padding: 4px 2px;
+      caret-color: var(--braun-orange);
+    }
+
+    .address-input::placeholder {
+      color: #4a4a4a;
+      font-weight: 400;
+    }
+
+    .tape-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .tape-btn.save {
+      background: linear-gradient(180deg, #e6c25a, #c9a23a);
+      color: #1a1a1a;
+      box-shadow: 0 2px 0 #6a541a, inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+    .tape-btn.save:active,
+    .tape-btn.save.pressed {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 #6a541a, inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .tape-btn.delete {
+      background: linear-gradient(180deg, #3a3a3a, #222);
+      color: #888;
+      box-shadow: 0 2px 0 #0a0a0a, inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .tape-btn.delete:active,
+    .tape-btn.delete.pressed {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 #0a0a0a, inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .tape-btn.delete:disabled {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .tape-btn.saved-flash {
+      animation: flashGreen 0.4s ease-out;
+    }
+
+    /* --- HBRP fee row gets the same look as other result rows, just a faint accent --- */
+    .result-row.hbrp-fee .result-label {
+      color: #888;
+    }
+    .result-row.hbrp-fee .result-value {
+      color: #d4b145; /* Braun yellow, matches reset button */
+    }
+
+    /* --- HBRP Deadline mini-row --- */
+    .hbrp-deadline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+      border-radius: 6px;
+      box-shadow:
+        inset 0 2px 3px rgba(0,0,0,0.55),
+        inset 0 -1px 0 rgba(255,255,255,0.04);
+    }
+
+    .hbrp-deadline .deadline-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .hbrp-deadline .deadline-label {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .hbrp-deadline .deadline-value {
+      color: #86c996;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      text-shadow: 0 0 4px rgba(134, 201, 150, 0.3);
+    }
+
+    .hbrp-deadline .deadline-value.empty {
+      color: #555;
+      text-shadow: none;
+    }
+
+    .date-input {
+      background: linear-gradient(180deg, #2f2f2f, #1d1d1d);
+      border: none;
+      border-radius: 4px;
+      color: #e6e6e6;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      padding: 6px 8px;
+      flex-shrink: 0;
+      max-width: 130px;
+      box-shadow:
+        0 2px 0 #0a0a0a,
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      color-scheme: dark;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .date-input:focus {
+      outline: none;
+      box-shadow:
+        0 1px 0 #0a0a0a,
+        inset 0 0 0 1px var(--braun-orange);
+    }
 
     /* The Configuration Grid (Commission Splits) */
     .controls-grid {
@@ -778,7 +948,10 @@
       }
     }
 
-    /* --- MOBILE APP MODE — locked to one screen, no scroll --- */
+    /* --- MOBILE APP MODE ---
+       Page-level scroll is locked (no bouncy page-refresh), but the calculator body
+       itself scrolls internally so the added Deal tape, HBRP fee, and Deadline rows
+       fit on every phone without truncation. */
     @media (max-width: 600px) {
       html, body {
         overflow: hidden;
@@ -793,8 +966,7 @@
         height: 100vh;          /* fallback */
         height: 100dvh;         /* tracks iOS URL bar */
         /* Note: avoid `position: fixed` here — it breaks iOS Safari's
-           ability to open the keyboard and scroll focused inputs into view.
-           `overflow: hidden` on html/body is enough to lock page scroll. */
+           ability to open the keyboard and scroll focused inputs into view. */
       }
 
       .calculator-body {
@@ -806,8 +978,10 @@
         border-radius: 0;
         box-shadow: none;
         margin: 0;
-        padding: max(18px, env(safe-area-inset-top)) 18px max(14px, env(safe-area-inset-bottom));
-        overflow: hidden;
+        padding: max(14px, env(safe-area-inset-top)) 18px max(14px, env(safe-area-inset-bottom));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
       }
 
       /* Remove the 3D side bevel + top-edge highlight on mobile since the device fills the viewport */
@@ -816,17 +990,22 @@
         display: none;
       }
 
-      /* Compact spacing so everything fits without scrolling */
-      .brand { margin: 0 0 14px; }
-      .lcd-screen-container { margin-bottom: 16px; }
-      .lcd-screen { min-height: 84px; padding: 14px 18px; }
+      /* Compact spacing */
+      .brand { margin: 0 0 12px; }
+      .address-tape { margin-bottom: 12px; padding: 7px 8px; gap: 6px; }
+      .address-tape .tape-label { font-size: 8.5px; }
+      .address-input { font-size: 13px; }
+      .lcd-screen-container { margin-bottom: 14px; }
+      .lcd-screen { min-height: 80px; padding: 14px 18px; }
       input#price { font-size: 34px; }
-      .memory-bank { margin-bottom: 16px; padding: 8px 6px 6px; }
-      .controls-grid { gap: 12px; margin-bottom: 20px; }
+      .memory-bank { margin-bottom: 14px; padding: 8px 6px 6px; }
+      .controls-grid { gap: 12px; margin-bottom: 18px; }
       .analog-input { padding: 12px 14px; }
-      .divider { margin: 0 -18px 16px; }
-      .results-section { gap: 14px; }
-      .footer { margin-top: 16px; }
+      .divider { margin: 0 -18px 14px; }
+      .results-section { gap: 12px; }
+      .hbrp-deadline { padding: 8px 10px; }
+      .date-input { font-size: 11px; padding: 5px 7px; max-width: 130px; }
+      .footer { margin-top: 14px; }
     }
 
     /* Extra compaction for short phones (iPhone SE, etc.) */
@@ -860,6 +1039,24 @@
     <div class="brand">
       <div class="brand-mark">BRAUN<span>ET66</span></div>
       <div class="solar-cell" aria-hidden="true"></div>
+    </div>
+
+    <!-- PROPERTY ADDRESS TAPE — type or pick from saved deals; star to save, trash to delete -->
+    <div class="address-tape">
+      <span class="tape-label">Deal</span>
+      <input
+        id="address"
+        class="address-input"
+        type="text"
+        list="deals-list"
+        placeholder="Address or label (e.g. 1234 Main St)"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        enterkeyhint="done" />
+      <datalist id="deals-list"></datalist>
+      <button id="save-deal-btn" class="tape-btn save" type="button" title="Save this deal" aria-label="Save deal">★</button>
+      <button id="delete-deal-btn" class="tape-btn delete" type="button" title="Delete saved deal" aria-label="Delete saved deal" disabled>✕</button>
     </div>
 
     <!-- MAIN DISPLAY -->
@@ -955,6 +1152,24 @@
         </div>
       </div>
 
+      <!-- Row 5: HBRP Rescission Fee (BC Home Buyer Rescission Period, 0.25% of price) -->
+      <div class="result-row hbrp-fee">
+        <div class="result-info">
+          <span class="result-label">HBRP Fee (0.25%)</span>
+          <span class="result-value" id="hbrp-fee">$0.00</span>
+        </div>
+        <button class="btn-round btn-dark" onclick="copySingle('hbrp-fee')">Copy</button>
+      </div>
+
+      <!-- HBRP Rescission Deadline calculator -->
+      <div class="hbrp-deadline">
+        <div class="deadline-info">
+          <span class="deadline-label">Rescission Deadline</span>
+          <span class="deadline-value empty" id="deadline-value">Pick contract date</span>
+        </div>
+        <input type="date" id="contract-date" class="date-input" aria-label="Contract acceptance date" />
+      </div>
+
       <!-- Error Message Area -->
       <div id="error-msg" class="error-banner">
         ⚠️ Listing commission is negative. Check splits.
@@ -1038,12 +1253,14 @@
       const coop = (first100k * coopFirst) + (remaining * coopRest);
       const listing = gross - coop;
       const gst = gross * 0.05;
+      const hbrpFee = price * 0.0025; // BC Home Buyer Rescission Period fee — 0.25% of price
 
       // Render
       document.getElementById('gross').innerText = formatCurrency(gross);
       document.getElementById('coop').innerText = formatCurrency(coop);
       document.getElementById('listing').innerText = formatCurrency(listing);
       document.getElementById('gst').innerText = formatCurrency(gst);
+      document.getElementById('hbrp-fee').innerText = formatCurrency(hbrpFee);
 
       // Error indication
       const listingEl = document.getElementById('listing');
@@ -1064,6 +1281,239 @@
       // Buzz once on the transition into a negative state — not on every keystroke
       if (isNegative && !calculate._wasNegative) haptic('error');
       calculate._wasNegative = isNegative;
+    }
+
+    // --- Saved Deals (localStorage) ---
+    // Each deal stores the address (key, case-insensitive), price string, the four
+    // split percentages, and the contract date so a property is fully reproducible.
+    const DEALS_KEY = 'bc_calc_deals_v1';
+    const DEALS_LIMIT = 100;
+
+    function getDeals() {
+      try { return JSON.parse(localStorage.getItem(DEALS_KEY)) || []; }
+      catch (_) { return []; }
+    }
+
+    function saveDealsList(list) {
+      try { localStorage.setItem(DEALS_KEY, JSON.stringify(list)); } catch (_) {}
+    }
+
+    function findDeal(address) {
+      const a = (address || '').trim().toLowerCase();
+      if (!a) return null;
+      return getDeals().find(d => d.address.toLowerCase() === a) || null;
+    }
+
+    function refreshDealsDatalist() {
+      const list = document.getElementById('deals-list');
+      list.innerHTML = '';
+      for (const d of getDeals()) {
+        const opt = document.createElement('option');
+        opt.value = d.address;
+        const priceNum = parseNumber(d.price);
+        if (priceNum > 0) opt.label = formatCurrency(priceNum);
+        list.appendChild(opt);
+      }
+    }
+
+    function snapshotState(address) {
+      return {
+        address,
+        price: document.getElementById('price').value,
+        totalFirst: document.getElementById('total_first').value,
+        totalRest: document.getElementById('total_rest').value,
+        coopFirst: document.getElementById('coop_first').value,
+        coopRest: document.getElementById('coop_rest').value,
+        contractDate: document.getElementById('contract-date').value,
+        savedAt: Date.now()
+      };
+    }
+
+    function applyDealToInputs(deal) {
+      // Normalize price display — render with commas even if it was saved while focused (raw)
+      const priceNum = parseNumber(deal.price);
+      document.getElementById('price').value = priceNum > 0 ? formatNumberWithCommas(priceNum) : '';
+      document.getElementById('total_first').value = deal.totalFirst || DEFAULTS.totalFirst;
+      document.getElementById('total_rest').value = deal.totalRest || DEFAULTS.totalRest;
+      document.getElementById('coop_first').value = deal.coopFirst || DEFAULTS.coopFirst;
+      document.getElementById('coop_rest').value = deal.coopRest || DEFAULTS.coopRest;
+      if (deal.contractDate) document.getElementById('contract-date').value = deal.contractDate;
+      calculate();
+      updateRescissionDeadline();
+      updateDeleteButtonState();
+    }
+
+    function persistDeal(address) {
+      const a = address.trim();
+      if (!a) {
+        showMemoryFeedback('ENTER ADDRESS');
+        haptic('error');
+        return;
+      }
+      const list = getDeals();
+      const i = list.findIndex(d => d.address.toLowerCase() === a.toLowerCase());
+      const deal = snapshotState(a);
+      if (i >= 0) list[i] = deal;
+      else list.unshift(deal);
+      saveDealsList(list.slice(0, DEALS_LIMIT));
+      refreshDealsDatalist();
+      updateDeleteButtonState();
+
+      const btn = document.getElementById('save-deal-btn');
+      btn.classList.add('saved-flash');
+      setTimeout(() => btn.classList.remove('saved-flash'), 400);
+      haptic('heavy');
+      showMemoryFeedback(i >= 0 ? 'UPDATED' : 'SAVED');
+    }
+
+    function removeDeal(address) {
+      const a = (address || '').trim().toLowerCase();
+      if (!a) return;
+      const list = getDeals().filter(d => d.address.toLowerCase() !== a);
+      saveDealsList(list);
+      refreshDealsDatalist();
+      updateDeleteButtonState();
+      haptic('medium');
+      showMemoryFeedback('DELETED');
+    }
+
+    function updateDeleteButtonState() {
+      const addr = document.getElementById('address').value;
+      document.getElementById('delete-deal-btn').disabled = !findDeal(addr);
+    }
+
+    function onAddressInput() {
+      const addr = document.getElementById('address').value;
+      const deal = findDeal(addr);
+      if (deal) {
+        applyDealToInputs(deal);
+        haptic('double');
+        showMemoryFeedback('LOADED');
+      } else {
+        updateDeleteButtonState();
+      }
+    }
+
+    // --- BC Stat Holidays + Business Days (for HBRP cooling-off deadline) ---
+    // Computed dynamically so it stays correct year after year. The BC HBRP
+    // regulation defines "business day" as Mon–Fri excluding BC stat holidays.
+    function easterSunday(year) {
+      // Anonymous Gregorian (Meeus/Jones/Butcher) algorithm
+      const a = year % 19;
+      const b = Math.floor(year / 100);
+      const c = year % 100;
+      const d = Math.floor(b / 4);
+      const e = b % 4;
+      const f = Math.floor((b + 8) / 25);
+      const g = Math.floor((b - f + 1) / 3);
+      const h = (19 * a + b - d - g + 15) % 30;
+      const i = Math.floor(c / 4);
+      const k = c % 4;
+      const l = (32 + 2 * e + 2 * i - h - k) % 7;
+      const m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const month = Math.floor((h + l - 7 * m + 114) / 31);
+      const day = ((h + l - 7 * m + 114) % 31) + 1;
+      return new Date(year, month - 1, day);
+    }
+
+    function nthWeekdayOfMonth(year, month, weekday, n) {
+      const first = new Date(year, month, 1);
+      const offset = ((weekday - first.getDay() + 7) % 7) + (n - 1) * 7;
+      return new Date(year, month, 1 + offset);
+    }
+
+    function addDays(date, days) {
+      const d = new Date(date);
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+
+    function toISODate(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function bcStatHolidays(year) {
+      const set = new Set();
+      const add = (date) => {
+        set.add(toISODate(date));
+        // If a fixed-date holiday falls on a weekend, the next Monday is observed too
+        const dow = date.getDay();
+        if (dow === 6) set.add(toISODate(addDays(date, 2))); // Sat → Mon
+        if (dow === 0) set.add(toISODate(addDays(date, 1))); // Sun → Mon
+      };
+
+      // Fixed-date holidays (with weekend → next-Monday observance)
+      add(new Date(year, 0, 1));    // New Year's Day
+      add(new Date(year, 6, 1));    // Canada Day
+      add(new Date(year, 8, 30));   // National Day for Truth and Reconciliation
+      add(new Date(year, 10, 11));  // Remembrance Day
+      add(new Date(year, 11, 25));  // Christmas Day
+
+      // Floating-Monday holidays (always a Monday — no observance shift needed)
+      set.add(toISODate(nthWeekdayOfMonth(year, 1, 1, 3))); // Family Day — 3rd Mon Feb
+      set.add(toISODate(nthWeekdayOfMonth(year, 7, 1, 1))); // BC Day — 1st Mon Aug
+      set.add(toISODate(nthWeekdayOfMonth(year, 8, 1, 1))); // Labour Day — 1st Mon Sep
+      set.add(toISODate(nthWeekdayOfMonth(year, 9, 1, 2))); // Thanksgiving — 2nd Mon Oct
+
+      // Victoria Day — Monday on or before May 24
+      const may24 = new Date(year, 4, 24);
+      const dowMay24 = may24.getDay();
+      const offset = dowMay24 === 0 ? -6 : 1 - dowMay24;
+      set.add(toISODate(addDays(may24, offset)));
+
+      // Good Friday — 2 days before Easter Sunday
+      set.add(toISODate(addDays(easterSunday(year), -2)));
+
+      return set;
+    }
+
+    function isBusinessDay(date, holidays) {
+      const dow = date.getDay();
+      if (dow === 0 || dow === 6) return false;
+      return !holidays.has(toISODate(date));
+    }
+
+    function rescissionDeadline(acceptanceDate) {
+      // 3 business days AFTER the acceptance date (the acceptance day itself doesn't count)
+      const y = acceptanceDate.getFullYear();
+      const holidays = new Set([
+        ...bcStatHolidays(y),
+        ...bcStatHolidays(y + 1) // in case we cross into next year
+      ]);
+      let date = new Date(acceptanceDate);
+      let count = 0;
+      while (count < 3) {
+        date = addDays(date, 1);
+        if (isBusinessDay(date, holidays)) count++;
+      }
+      return date;
+    }
+
+    function updateRescissionDeadline() {
+      const input = document.getElementById('contract-date');
+      const out = document.getElementById('deadline-value');
+      const v = input.value;
+      if (!v) {
+        out.textContent = 'Pick contract date';
+        out.classList.add('empty');
+        return;
+      }
+      const [yy, mm, dd] = v.split('-').map(Number);
+      const start = new Date(yy, mm - 1, dd);
+      if (isNaN(start.getTime())) {
+        out.textContent = 'Invalid date';
+        out.classList.add('empty');
+        return;
+      }
+      const deadline = rescissionDeadline(start);
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+      });
+      out.textContent = `${formatter.format(deadline)} · 11:59 PM`;
+      out.classList.remove('empty');
     }
 
     // --- Memory Functions ---
@@ -1261,12 +1711,13 @@
       });
     }
 
-    // --- Tactile press feedback for round buttons ---
+    // --- Tactile press feedback for round buttons + tape buttons ---
     // iOS Safari's :active is unreliable once -webkit-tap-highlight-color is removed,
     // so we drive the press state via touch events and ensure visual + haptic confirmation.
     function setupTactilePress() {
-      document.querySelectorAll('.btn-round').forEach(btn => {
+      document.querySelectorAll('.btn-round, .tape-btn').forEach(btn => {
         const press = () => {
+          if (btn.disabled) return;
           btn.classList.add('pressed');
           haptic('tick');
         };
@@ -1301,7 +1752,28 @@
       
       setupMemoryButtons();
       setupTactilePress();
+
+      // --- Deals: address tape + save/delete buttons ---
+      refreshDealsDatalist();
+      const addressEl = document.getElementById('address');
+      // `change` fires reliably across browsers when a datalist option is picked;
+      // `input` covers free typing — we update only the delete-button state there
+      // so we don't auto-load mid-typing.
+      addressEl.addEventListener('change', onAddressInput);
+      addressEl.addEventListener('input', updateDeleteButtonState);
+      document.getElementById('save-deal-btn')
+        .addEventListener('click', () => persistDeal(addressEl.value));
+      document.getElementById('delete-deal-btn')
+        .addEventListener('click', () => removeDeal(addressEl.value));
+
+      // --- HBRP deadline: default to today, recompute on change ---
+      const contractEl = document.getElementById('contract-date');
+      if (!contractEl.value) contractEl.value = toISODate(new Date());
+      contractEl.addEventListener('change', updateRescissionDeadline);
+
       calculate();
+      updateRescissionDeadline();
+      updateDeleteButtonState();
     });
 
     // --- PWA: register service worker for offline + installability ---
