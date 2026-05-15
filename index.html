@@ -599,11 +599,13 @@
       touch-action: manipulation;
     }
 
-    .btn-round:active {
-      transform: translateY(2px);
+    .btn-round:active,
+    .btn-round.pressed {
+      transform: translateY(3px);
       box-shadow:
-        0 2px 3px rgba(0,0,0,0.45),
-        inset 0 2px 5px rgba(0,0,0,0.35);
+        0 1px 2px rgba(0,0,0,0.5),
+        inset 0 3px 6px rgba(0,0,0,0.45),
+        inset 0 -1px 0 rgba(255,255,255,0.05);
     }
 
     .btn-orange {
@@ -764,28 +766,36 @@
       }
     }
 
-    /* --- MOBILE APP MODE --- */
+    /* --- MOBILE APP MODE — locked to one screen, no scroll --- */
     @media (max-width: 600px) {
+      html, body {
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+
       body {
         padding: 0;
         margin: 0;
-        background: var(--braun-body); /* Remove desk, match device */
-        align-items: flex-start;
-        overflow-x: hidden;
+        background: var(--braun-body);
+        align-items: stretch;
+        height: 100vh;          /* fallback */
+        height: 100dvh;         /* tracks iOS URL bar */
+        position: fixed;        /* pin to viewport so the page itself can never scroll */
+        inset: 0;
+        width: 100%;
       }
 
       .calculator-body {
         width: 100%;
         max-width: 100%;
-        min-height: 100vh;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
         border-radius: 0;
         box-shadow: none;
         margin: 0;
-        /* Handle Safe Areas for iPhone X+ */
-        padding-top: max(32px, env(safe-area-inset-top)); 
-        padding-bottom: max(32px, env(safe-area-inset-bottom));
-        padding-left: 20px;
-        padding-right: 20px;
+        padding: max(18px, env(safe-area-inset-top)) 18px max(14px, env(safe-area-inset-bottom));
+        overflow: hidden;
       }
 
       /* Remove the 3D side bevel + top-edge highlight on mobile since the device fills the viewport */
@@ -793,11 +803,40 @@
       .calculator-body::after {
         display: none;
       }
-      
-      /* Adjust Brand for safe area */
-      .brand {
-        margin-top: 10px;
-      }
+
+      /* Compact spacing so everything fits without scrolling */
+      .brand { margin: 0 0 14px; }
+      .lcd-screen-container { margin-bottom: 16px; }
+      .lcd-screen { min-height: 84px; padding: 14px 18px; }
+      input#price { font-size: 34px; }
+      .memory-bank { margin-bottom: 16px; padding: 8px 6px 6px; }
+      .controls-grid { gap: 12px; margin-bottom: 20px; }
+      .analog-input { padding: 12px 14px; }
+      .divider { margin: 0 -18px 16px; }
+      .results-section { gap: 14px; }
+      .footer { margin-top: 16px; }
+    }
+
+    /* Extra compaction for short phones (iPhone SE, etc.) */
+    @media (max-width: 600px) and (max-height: 740px) {
+      .brand { margin-bottom: 10px; font-size: 12px; }
+      .brand-mark { font-size: 12px; }
+      .lcd-screen-container { margin-bottom: 12px; padding: 8px; }
+      .lcd-screen { min-height: 70px; padding: 12px 14px; }
+      input#price { font-size: 28px; }
+      .screen-label { font-size: 9px; }
+      .memory-bank { margin-bottom: 12px; padding: 6px 6px 4px; }
+      .mem-btn { height: 26px; width: 42px; }
+      .mem-label { font-size: 8px; margin-top: 3px; }
+      .controls-grid { gap: 8px; margin-bottom: 14px; }
+      .input-group label { font-size: 9px; }
+      .analog-input { padding: 9px 12px; font-size: 14px; }
+      .divider { margin-bottom: 12px; }
+      .results-section { gap: 9px; }
+      .result-value { font-size: 17px; }
+      .result-label { font-size: 10px; margin-bottom: 2px; }
+      .btn-round { width: 40px; height: 40px; }
+      .footer { margin-top: 10px; font-size: 9px; letter-spacing: 0.5px; }
     }
 
   </style>
@@ -929,6 +968,22 @@
         coopRest: "1.1625%"
     };
 
+    // --- Haptics ---
+    // navigator.vibrate works on Android Chrome/Firefox; iOS Safari ignores it silently.
+    const HAPTIC_SUPPORTED = typeof navigator !== 'undefined' && 'vibrate' in navigator;
+    const HAPTIC_PATTERNS = {
+        tick:   8,            // tiny acknowledgement for a press
+        light:  12,           // simple tap confirm
+        medium: 22,           // reset / mode change
+        heavy:  38,           // memory save committed
+        double: [10, 50, 14], // load / success
+        error:  [28, 60, 28]  // negative-commission alert
+    };
+    function haptic(kind) {
+        if (!HAPTIC_SUPPORTED) return;
+        try { navigator.vibrate(HAPTIC_PATTERNS[kind] ?? kind); } catch (_) {}
+    }
+
     // --- Logic ---
     const formatCurrency = (val) => 
       new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(val);
@@ -977,8 +1032,9 @@
       const listingEl = document.getElementById('listing');
       const errorMsg = document.getElementById('error-msg');
       const screenError = document.getElementById('screen-error');
-      
-      if (listing < 0) {
+      const isNegative = listing < 0;
+
+      if (isNegative) {
         listingEl.classList.add('negative');
         errorMsg.classList.add('visible');
         screenError.classList.add('visible');
@@ -987,6 +1043,10 @@
         errorMsg.classList.remove('visible');
         screenError.classList.remove('visible');
       }
+
+      // Buzz once on the transition into a negative state — not on every keystroke
+      if (isNegative && !calculate._wasNegative) haptic('error');
+      calculate._wasNegative = isNegative;
     }
 
     // --- Memory Functions ---
@@ -1011,10 +1071,11 @@
                 didSave = false;
                 startX = x; startY = y;
                 btn.classList.add('holding');
+                if (pointerType === 'touch') haptic('tick'); // tiny confirm that the press registered
                 pressTimer = setTimeout(() => {
                     saveToMemory(id);
                     didSave = true;
-                    if (navigator.vibrate) navigator.vibrate(35);
+                    haptic('heavy'); // committed
                     pressTimer = null;
                     btn.classList.remove('holding');
                 }, HOLD_MS);
@@ -1108,8 +1169,10 @@
             document.getElementById('coop_first').value = config.coopFirst;
             document.getElementById('coop_rest').value = config.coopRest;
             calculate();
+            haptic('double');
             showMemoryFeedback(`LOADED ${slot.toUpperCase()}`);
         } else {
+            haptic('light');
             showMemoryFeedback(`${slot.toUpperCase()} EMPTY`);
         }
     }
@@ -1120,6 +1183,7 @@
         document.getElementById('coop_first').value = DEFAULTS.coopFirst;
         document.getElementById('coop_rest').value = DEFAULTS.coopRest;
         calculate();
+        haptic('medium');
         showMemoryFeedback("RESET DEFAULTS");
     }
 
@@ -1171,9 +1235,31 @@
     function copySingle(id) {
       const rawText = document.getElementById(id).innerText;
       const val = rawText.replace(/[^\d.]/g, '');
-      
+
       navigator.clipboard.writeText(val).then(() => {
+        haptic('double');
         showToast();
+      }).catch(() => {
+        haptic('error');
+      });
+    }
+
+    // --- Tactile press feedback for round buttons ---
+    // iOS Safari's :active is unreliable once -webkit-tap-highlight-color is removed,
+    // so we drive the press state via touch events and ensure visual + haptic confirmation.
+    function setupTactilePress() {
+      document.querySelectorAll('.btn-round').forEach(btn => {
+        const press = () => {
+          btn.classList.add('pressed');
+          haptic('tick');
+        };
+        const release = () => btn.classList.remove('pressed');
+        btn.addEventListener('touchstart', press, { passive: true });
+        btn.addEventListener('touchend', release);
+        btn.addEventListener('touchcancel', release);
+        // Desktop niceties — keeps the state in sync if the mouse drifts off mid-press
+        btn.addEventListener('mouseleave', release);
+        btn.addEventListener('blur', release);
       });
     }
 
@@ -1197,6 +1283,7 @@
       });
       
       setupMemoryButtons();
+      setupTactilePress();
       calculate();
     });
   </script>
